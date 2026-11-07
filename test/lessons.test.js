@@ -157,3 +157,20 @@ test('both lesson instruments use the shared shell instead of their own synth ha
     assert.doesNotMatch(src, /lazySynth|playAnimated|downloadWav/, `${file} should leave synth handling to the shell`);
   }
 });
+
+// The voice slider on a consonant page moves every tenseness in a gesture by the same amount, so the
+// gesture keeps its own shape (a voiced fricative stays breathier than its vowel).
+test('withTenseness shifts a score or a frame and keeps the gesture shape', async () => {
+  const { withTenseness } = await import('../lib/ui/lesson-shell.js');
+  const g = consonantGesture(consonantBySymbol('z'), {});
+  const base = g.score.keyframes.map((k) => k.tenseness);
+  const up = withTenseness(g.score, 0.9).keyframes.map((k) => k.tenseness);
+  assert.equal(up.length, g.score.keyframes.length);
+  const set = up.filter((v, i) => base[i] !== undefined);
+  assert.ok(set.every((v) => v <= 1 && v >= 0.05));
+  const { normalizeScore } = await import('../lib/score.js');
+  const same = withTenseness(g.score, 0.6).keyframes.map((k) => k.tenseness);
+  assert.deepEqual(same, normalizeScore(g.score).keyframes.map((k) => k.tenseness), 'neutral leaves the gesture alone');
+  assert.ok(withTenseness(g.steady, 0.9).tenseness > g.steady.tenseness);
+  assert.ok(withTenseness(g.steady, 0.2).tenseness < g.steady.tenseness);
+});

@@ -23,17 +23,18 @@ import { shapeOfSymbol } from '../../lib/vowel-map.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
 import { createConsonantTable } from '../../lib/ui/consonanttable.js';
-import { lazySynth, playAnimated, downloadWav, log, unlog, round } from '../../lib/ui/demo.js';
+import { createShell, withTenseness, round } from '../../lib/ui/lesson-shell.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
-let synth = null;
-let playing = null;
 let lastScore = null;
 const SINGLE_PRESS_STRETCH = 5;
-const state = { f0: 130, carrier: 'none', aspirated: false };
-const PITCH = [70, 400];
+const state = { carrier: 'none', aspirated: false };
+// The shared shell (`lib/ui/lesson-shell.js`) keeps pitch and voice quality and does the sound.
+const shell = createShell({
+  downloadScore: () => lastScore || withTenseness(gestureOf('s').score, shell.state.tenseness),
+  downloadName: (s) => `consonant-${round(s.f0)}hz.wav`,
+});
 
 // ## Choosing the carrier
 //
@@ -44,7 +45,7 @@ function carrierShape() {
   return { tongueIndex, tongueDiameter, lips };
 }
 const gestureOf = (symbol) =>
-  consonantGesture(consonantBySymbol(symbol), { f0: state.f0, carrier: carrierShape(), aspirated: state.aspirated });
+  consonantGesture(consonantBySymbol(symbol), { f0: shell.state.f0, carrier: carrierShape(), aspirated: state.aspirated });
 
 // ## Showing it
 function show(frame, symbol) {
@@ -58,13 +59,9 @@ $('readout').style.whiteSpace = 'pre-line';
 
 // ## Sound
 //
-// Audio can only start after a gesture, and starting takes a moment, so `held` tracks whether the
-// press is still going when the synth is ready.
-let held = null;
-let heldLive = false;
+// A sound that can be held is held for as long as the pointer is down; any other is a gesture that plays through.
 async function press(symbol) {
-  held = symbol;
-  if (playing) playing.cancel();
+  shell.cancelPlaying();
   const g = gestureOf(symbol);
   // Between vowels: "a C a C a" at natural speed. Alone: five times as long as the gesture's natural
   // length, so each phase of it (closure, burst, release, glide) can be heard on its own.
@@ -72,60 +69,44 @@ async function press(symbol) {
   // `consonants.js`.)
   const c = consonantBySymbol(symbol);
   const quickStop = ['stop', 'affricate', 'tap'].includes(kindOf(c)) && c.symbol !== 'ʔ';
-  const score = state.carrier === 'none'
+  const score = withTenseness(state.carrier === 'none'
     ? scaleTime(g.score, quickStop ? 1 : SINGLE_PRESS_STRETCH)
-    : betweenVowels(consonantBySymbol(symbol), { f0: state.f0, carrier: carrierShape(), aspirated: state.aspirated }).score;
+    : betweenVowels(c, { f0: shell.state.f0, carrier: carrierShape(), aspirated: state.aspirated }).score, shell.state.tenseness);
   lastScore = score;
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
-  if (held !== symbol && g.kind === 'continuant') return; // let go before audio was ready
   if (g.kind === 'continuant' && state.carrier === 'none') {
-    // Held for as long as the pointer is down.
+    const steady = () => withTenseness(g.steady, shell.state.tenseness);
     show(g.steady, symbol);
-    heldLive = true;
-    synth.live({ ...g.steady, intensity: g.steady.intensity });
+    await shell.startHeld(steady);
   } else {
-    playing = playAnimated(synth, score, (frame) => show(frame, symbol));
+    await shell.play(score, (frame) => show(frame, symbol));
   }
 }
-function release(symbol) {
-  if (held === symbol) held = null;
-  if (synth && heldLive) { heldLive = false; synth.release(); }
-}
+const release = () => shell.stopHeld();
 const table = createConsonantTable($('table'), { onPress: press, onRelease: release });
 
 // ## Playing a family
 //
 // Several gestures joined into one score by `concatScores`, animated while it plays.
 async function playFamily(filter, label) {
-  if (playing) playing.cancel();
   const symbols = CONSONANTS.filter(filter).map((c) => c.symbol);
   const parts = symbols.map((s) => gestureOf(s).score);
-  const score = concatScores(parts, 0.1);
+  const score = withTenseness(concatScores(parts, 0.1), shell.state.tenseness);
   lastScore = score;
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
   const starts = [];
-  let t = 0;
-  for (const p of parts) { starts.push(t); t += p.duration + 0.1; }
-  playing = playAnimated(synth, score, (frame, time) => {
+  let at = 0;
+  for (const p of parts) { starts.push(at); at += p.duration + 0.1; }
+  shell.setStatus(t('status.playingLabel', { label: tp(label), list: symbols.join(' ') }));
+  await shell.play(score, (frame, time) => {
     let i = starts.findIndex((s, k) => time >= s && (k === starts.length - 1 || time < starts[k + 1]));
     show(frame, symbols[Math.max(0, i)]);
   });
-  $('status').textContent = t('status.playingLabel', { label: tp(label), list: symbols.join(' ') });
-  await playing.done;
-  $('status').textContent = '';
+  shell.setStatus('');
 }
 $('playRow').addEventListener('click', () => playFamily((c) => c.manner === 'plosive', 'stops'));
 $('playFric').addEventListener('click', () => playFamily((c) => c.manner === 'fricative', 'fricatives'));
-$('stop').addEventListener('click', () => { if (playing) playing.cancel(); if (synth) synth.release(); $('status').textContent = ''; });
-$('download').addEventListener('click', () => {
-  downloadWav(lastScore || gestureOf('s').score, `consonant-${round(state.f0)}hz.wav`);
-});
 
 // ## Controls
 $('carrier').addEventListener('change', (e) => { state.carrier = e.target.value; });
 $('aspirated').addEventListener('change', (e) => { state.aspirated = e.target.checked; });
-$('pitch').addEventListener('input', (e) => { state.f0 = log(Number(e.target.value), ...PITCH); $('pitchOut').textContent = `${Math.round(state.f0)} Hz`; });
-$('pitch').value = unlog(state.f0, ...PITCH);
-$('pitchOut').textContent = `${Math.round(state.f0)} Hz`;
 NOT_MODELLED.forEach((note, i) => { const li = document.createElement('li'); li.textContent = t(`nm.${i + 1}`); $('notModelled').append(li); });
 drawTract($('tract'), shapeOf(DEFAULT_FRAME));
