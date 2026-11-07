@@ -32,6 +32,8 @@ test('the ten languages match', { skip }, () => {
   LANGUAGES.forEach((l, i) => {
     assert.equal(compiled[i].Code, l.code);
     assert.equal(compiled[i].Rhythm.name.toLowerCase(), l.rhythm, l.code);
+    assert.equal(compiled[i].Range, l.range, `${l.code} range`);
+    assert.equal(compiled[i].Drift, l.drift, `${l.code} drift`);
     assert.equal(compiled[i].Name, l.name);
     assert.equal(compiled[i].Native, l.native);
     assert.equal(compiled[i].Sample, l.sample);

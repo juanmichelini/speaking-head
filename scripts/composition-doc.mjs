@@ -5,6 +5,7 @@
 // if the document is out of date.
 import { writeFileSync } from 'node:fs';
 import { compositionMarkdown } from '../lib/composition.js';
+import { LANGUAGES } from '../lib/languages.js';
 
-writeFileSync(new URL('../docs/composition.md', import.meta.url), compositionMarkdown());
+writeFileSync(new URL('../docs/composition.md', import.meta.url), compositionMarkdown(LANGUAGES));
 console.log('wrote docs/composition.md');

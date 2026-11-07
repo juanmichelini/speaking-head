@@ -62,7 +62,7 @@ let say
         | None -> []
     // A statement keeps the voice's own drift; a question or a flat line replaces it.
     let line = if intonation = Statement then None else Some(lineOf intonation)
-    let speech = speakLine line (fun o -> { o with Rate = rate; Overrides = overrides }) voice ipa
+    let speech = speakLine line (fun o -> { o with Rate = rate; Overrides = overrides; Range = o.Range * language.Range; Declination = o.Declination * language.Drift }) voice ipa
     { Speech = speech
       Before = heard.Ipa
       Ipa = ipa
