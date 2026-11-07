@@ -36,7 +36,7 @@ that lead up to it:
   free: a line from the lips to the throat that you press and slide along, hearing every place between the named ones;
   then lesson 2 is the full table.
 - **3.1, tones:** one vowel with its pitch contour as the only free thing: five levels (Chao's tone letters), drawn on a pad
-  or chosen from the four Mandarin tones; then lesson 3 joins vowels and consonants.
+  or chosen from the four Mandarin tones; then 3.2 frees the pitch line under a whole phrase (a statement drifts down, a question rises), and lesson 3 joins vowels and consonants.
 
 How every lesson composes from the simpler ones (input, range, output, built on) is in
 [`docs/composition.md`](docs/composition.md), generated from `lib/composition.js` and checked against the code's imports by a test.

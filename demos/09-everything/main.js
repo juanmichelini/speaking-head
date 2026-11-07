@@ -1,7 +1,7 @@
 // # Lesson 9: Everything
 //
-// The capstone: every stage of the chain at once. Type text, choose a language, an accent, a rhythm, a speed and a
-// voice, and hear it. This page does no work of its own: `speakText` in `lib/pipeline.js` calls lesson 4 (words
+// The capstone: every stage of the chain at once. Type text, choose a language, an accent, a rhythm, a speed, a
+// sentence melody (statement or question) and a voice, and hear it. This page does no work of its own: `speakText` in `lib/pipeline.js` calls lesson 4 (words
 // to IPA), lesson 8 (accent), lesson 7 (rhythm), lessons 3 and 6 (plan, at a rate) and lesson 5 (voice), and the
 // shared shell plays the score. Change anything below and the stage above it still works as it did on its own.
 import { speakText } from '../../lib/pipeline.js';
@@ -59,6 +59,7 @@ async function build() {
     accent: await accentOf($('accent').value),
     rhythm: $('rhythm').value,
     rate: rate(),
+    intonation: $('intonation').value,
     voice: voiceById($('voice').value),
   });
 }
@@ -88,6 +89,7 @@ const option = (select, value, text) => select.append(Object.assign(document.cre
 for (const l of LANGUAGES) option($('language'), l.code, `${l.name} · ${l.native}`);
 for (const a of ACCENTS) option($('accent'), a.id, a.label);
 for (const v of VOICES) option($('voice'), v.id, t(`voice.label.${v.id}`));
+for (const kind of ['statement', 'question', 'flat']) option($('intonation'), kind, t(`intonation.${kind}`));
 option($('rhythm'), 'language', t('everything.rhythm.auto'));
 for (const mode of ['stress', 'syllable', 'none']) option($('rhythm'), mode, t(`rhythm.mode.${mode}`));
 $('voice').value = 'man';

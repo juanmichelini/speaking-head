@@ -30,7 +30,8 @@ adds a stage.
 | 2.9 | affricates | place 13.5 (throat) to 43.5 (lips); a stop released into a fricative | a frame with a constriction at the place (index, gap, noise), velum and voicing | 2.1, 2.3 |
 | 2 | the whole pulmonic table | manner (a category) × voicing 0/1 × place 13.5–43.5 | a frame, or a score (closure, burst, release), with the carrier vowel taken from lesson 1 | 1, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9 |
 | 3.1 | one vowel and a tone (Chao letters ˥˦˧˨˩) | level 1–5, up to three per contour; each level 0.12 octave around your pitch | a score whose only movement is f0 | 1 |
-| 3 | an IPA string (vowels, consonants, stress, length, tone) | the symbols of lessons 1 and 2, plus marks | a score: each sound's gesture, the tongue steered from the last vowel to the next | 1, 2, 3.1 |
+| 3.2 | a phrase and its pitch line | drift 0–30 % over the phrase, final rise 0–8 semitones | a score with the line added to every frame; stress and tone untouched | 3.1 |
+| 3 | an IPA string (vowels, consonants, stress, length, tone) | the symbols of lessons 1 and 2, plus marks | a score: each sound's gesture, the tongue steered from the last vowel to the next | 1, 2, 3.1, 3.2 |
 | 4 | text in one of ten languages | a word list per language, or spelling rules (Spanish, Indonesian) | an IPA string, which is lesson 3's input | 3 |
 | 5 | a voice: tract length, pitch, tenseness, vibrato, jitter, range | tract 9.5–26 cm, pitch 50–600 Hz, tenseness 0.1–1 | lesson 3's score with another speaker, plus the tract length the engine needs | 3 |
 | 6 | a rate | 0.4–3.5 times natural speed | the same speech with its timings scaled (consonants shrink less than vowels) | 3 |

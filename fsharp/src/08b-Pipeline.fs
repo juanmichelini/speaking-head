@@ -11,6 +11,7 @@ module IpaTrombone.Pipeline
 
 open IpaTrombone.Languages
 open IpaTrombone.Planner
+open IpaTrombone.Prosody
 open IpaTrombone.Voices
 open IpaTrombone.Rhythms
 open IpaTrombone.Accents
@@ -45,6 +46,7 @@ let say
     (accent: Accent option)
     (choice: RhythmChoice)
     (rate: float)
+    (intonation: Intonation)
     (voice: Voice)
     (text: string)
     : Said =
@@ -58,7 +60,9 @@ let say
         match mode with
         | Some m -> (rhythmPlan m defaultRhythmOptions ipa).Overrides
         | None -> []
-    let speech = speakWith (fun o -> { o with Rate = rate; Overrides = overrides }) voice ipa
+    // A statement keeps the voice's own drift; a question or a flat line replaces it.
+    let line = if intonation = Statement then None else Some(lineOf intonation)
+    let speech = speakLine line (fun o -> { o with Rate = rate; Overrides = overrides }) voice ipa
     { Speech = speech
       Before = heard.Ipa
       Ipa = ipa

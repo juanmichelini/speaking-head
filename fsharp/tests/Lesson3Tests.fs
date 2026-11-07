@@ -225,6 +225,17 @@ let plannerTests =
             Expect.isTrue (contourOf toneStep 0.0 2 (Some [ 5; 1 ]) |> List.forall (fun st -> abs st = 0.0)) "a flat voice has no movement"
         }
 
+        test "a question ends higher than a statement, and a flat line does not move" {
+            let o = { defaultPlanOptions with Declination = 0.0 }
+            let lastF0 (p: Plan) = (List.last p.Score.Keyframes).Frame.F0
+            let statement = planWith (lineOf Statement) o "ˈola ˈmundo"
+            let question = planWith (lineOf Question) o "ˈola ˈmundo"
+            Expect.isTrue (lastF0 question > lastF0 statement) "a question ends higher"
+            let flat = planWith (lineOf Flat) o "ˈola ˈmundo"
+            Expect.isTrue (abs (lastF0 flat - lastF0 (plan o "ˈola ˈmundo")) < 1e-9) "a flat line is no drift at all"
+            Expect.isTrue (rise 5.0 0.75 0.5 = 0.0 && abs (rise 5.0 0.75 1.0 - 5.0) < 1e-9) "a rise is nothing before it starts and its size at the end"
+        }
+
         test "a tone level is a fixed step of octaves around the speaker's pitch" {
             let hz = toneHz 0.12 1.0 130.0
             Expect.isTrue (close (hz 3) 130.0) "level 3 is the speaker's own pitch"
