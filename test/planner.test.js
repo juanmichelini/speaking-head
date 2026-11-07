@@ -90,3 +90,12 @@ test('pitch declines over the utterance', () => {
   const k = plan('a a a a a a', { declination: 0.2 }).score.keyframes.filter((x) => x.intensity > 0.9);
   assert.ok(k[k.length - 1].f0 < k[0].f0 * 0.9);
 });
+
+// ## Tone levels are steps in octaves
+test('a tone level is a fixed step of octaves around the speaker\'s pitch', async () => {
+  const { toneHz } = await import('../lib/planner.js');
+  assert.equal(toneHz(3, 130), 130);
+  for (let l = 1; l < 5; l++) assert.ok(toneHz(l + 1, 130) > toneHz(l, 130));
+  assert.ok(Math.abs(toneHz(5, 130) / toneHz(3, 130) - toneHz(3, 130) / toneHz(1, 130)) < 1e-12);
+  assert.equal(toneHz(5, 130, 0), 130, 'a flat voice has no tone movement');
+});

@@ -212,6 +212,14 @@ let plannerTests =
             Expect.isTrue ((List.last voiced).Frame.F0 < (List.head voiced).Frame.F0 * 0.9) "later is lower"
         }
 
+        test "a tone level is a fixed step of octaves around the speaker's pitch" {
+            let hz = toneHz 0.12 1.0 130.0
+            Expect.isTrue (close (hz 3) 130.0) "level 3 is the speaker's own pitch"
+            Expect.isTrue (hz 5 > hz 4 && hz 4 > hz 3 && hz 3 > hz 2 && hz 2 > hz 1) "higher level, higher pitch"
+            Expect.isTrue (close (hz 5 / hz 3) (hz 3 / hz 1)) "equal steps in octaves"
+            Expect.isTrue (close (toneHz 0.12 0.0 130.0 5) 130.0) "a flat voice has no tone movement"
+        }
+
         test "a falling tone falls and a rising tone rises" {
             let flat = { defaultPlanOptions with Declination = 0.0 }
             let pitches text =
