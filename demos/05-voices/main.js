@@ -15,15 +15,23 @@ import { DEFAULT_FRAME } from '../../lib/score.js';
 import { markAt } from '../../lib/planner.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
-import { lazySynth, playAnimated, downloadWav, log, unlog, round } from '../../lib/ui/demo.js';
+import { createShell } from '../../lib/ui/lesson-shell.js';
+import { log, unlog } from '../../lib/ui/demo.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
-let synth = null;
-let playing = null;
 let current = null;
 const PITCH = [50, 600];
+// The shared shell (`lib/ui/lesson-shell.js`) does the sound. The pitch
+// and tenseness belong to the voice being edited, not to the page, so the shell's own sliders for them are left out.
+const shell = createShell({
+  pitch: false,
+  quality: false,
+  onStop: () => { sayEveryVoice.token = (sayEveryVoice.token || 0) + 1; },
+  downloadScore: () => (current || speak($('ipa').value, voice)).score,
+  downloadName: () => `voice-${voice.id || 'custom'}.wav`,
+  downloadOptions: () => ({ tractLength: (current || speak($('ipa').value, voice)).tractLength }),
+});
 
 // The voice being edited: a preset plus any slider changes.
 let voice = { ...voiceById('man') };
@@ -63,21 +71,20 @@ slider('vibrato', (x) => { voice.vibratoDepth = x; });
 async function sayWith(v, text = $('ipa').value) {
   const utterance = speak(text, v);
   current = utterance;
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
+  const synth = await shell.getSynth();
+  if (!synth) return;
   synth.setTractLength(utterance.tractLength);
-  playing = playAnimated(synth, utterance.score, (frame, time) => {
+  await shell.play(utterance.score, (frame, time) => {
     drawTract($('tract'), shapeOf(frame, { tractLength: utterance.tractLength }));
     const m = markAt(utterance.marks, time);
     $('readout').textContent = t('voices.readout', { label: v.id ? t(`voice.label.${v.id}`) : t('voices.custom'), cm: utterance.tractLength.toFixed(1), hz: Math.round(v.f0), mark: m ? ` · [${m.symbol}]` : '' });
   });
-  await playing.done;
 }
 async function say() {
-  if (playing) playing.cancel();
   await sayWith(voice);
 }
 async function sayEveryVoice() {
-  if (playing) playing.cancel();
+  shell.cancelPlaying();
   const token = (sayEveryVoice.token = (sayEveryVoice.token || 0) + 1);
   for (const v of VOICES) {
     if (sayEveryVoice.token !== token) return;
@@ -90,10 +97,5 @@ async function sayEveryVoice() {
 
 $('say').addEventListener('click', say);
 $('all').addEventListener('click', sayEveryVoice);
-$('stop').addEventListener('click', () => { sayEveryVoice.token = (sayEveryVoice.token || 0) + 1; if (playing) playing.cancel(); if (synth) synth.stop(); $('status').textContent = ''; });
-$('download').addEventListener('click', () => {
-  const u = current || speak($('ipa').value, voice);
-  downloadWav(u.score, `voice-${voice.id || 'custom'}.wav`, { tractLength: u.tractLength });
-});
 $('readout').style.whiteSpace = 'pre-line';
 showControls();

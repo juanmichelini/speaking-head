@@ -12,14 +12,18 @@ import { plan, markAt, syllableRate } from '../../lib/planner.js';
 import { scaleTime, DEFAULT_FRAME } from '../../lib/score.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
-import { lazySynth, playAnimated, downloadWav, log, unlog } from '../../lib/ui/demo.js';
+import { createShell } from '../../lib/ui/lesson-shell.js';
+import { log, unlog } from '../../lib/ui/demo.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
-let synth = null;
-let playing = null;
 let current = null;
+// The shared shell (`lib/ui/lesson-shell.js`) does the sound; this page has no pitch control.
+const shell = createShell({
+  onStop: () => { ladder.token = (ladder.token || 0) + 1; },
+  downloadScore: () => (current || utterance()).score,
+  downloadName: () => `tempo-${rate().toFixed(1)}x.wav`,
+});
 const RATE = [0.4, 3.5];
 
 const rate = () => log(Number($('rate').value), ...RATE);
@@ -71,21 +75,19 @@ function refresh() {
 // frame being sounded, so the tract picture moves in time with what you hear. `markAt` turns the
 // time into the segment that is sounding, for the readout.
 async function play(u, label = '') {
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
   showBars(u);
-  playing = playAnimated(synth, u.score, (frame, t) => {
+  await shell.play(u.score, (frame, t) => {
     drawTract($('tract'), shapeOf(frame));
     const m = markAt(u.marks, t);
     $('readout').textContent = `${label}${m ? `[${m.symbol}]` : ''}`;
   });
-  await playing.done;
 }
-async function say() { if (playing) playing.cancel(); refresh(); await play(current); }
+async function say() { refresh(); await play(current); }
 //
 // The ladder says the same text four times, getting faster. The token lets the Stop button cancel
 // it between steps: each step checks that it is still the latest ladder before starting.
 async function ladder() {
-  if (playing) playing.cancel();
+  shell.cancelPlaying();
   const token = (ladder.token = (ladder.token || 0) + 1);
   for (const [name, r] of [['slow', 0.6], ['medium', 1], ['fast', 1.8], ['veryfast', 3]]) {
     if (ladder.token !== token) return;
@@ -107,8 +109,6 @@ $('ipa').addEventListener('input', refresh);
 for (const r of document.querySelectorAll('input[name=mode]')) r.addEventListener('change', refresh);
 $('say').addEventListener('click', say);
 $('ladder').addEventListener('click', ladder);
-$('stop').addEventListener('click', () => { ladder.token = (ladder.token || 0) + 1; if (playing) playing.cancel(); if (synth) synth.stop(); $('status').textContent = ''; });
-$('download').addEventListener('click', () => downloadWav((current || utterance()).score, `tempo-${rate().toFixed(1)}x.wav`));
 $('readout').style.whiteSpace = 'pre-line';
 drawTract($('tract'), shapeOf(DEFAULT_FRAME));
 refresh();

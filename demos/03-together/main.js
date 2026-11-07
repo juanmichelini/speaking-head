@@ -14,15 +14,16 @@ import { CONSONANT_SYMBOLS } from '../../lib/consonants.js';
 import { DEFAULT_FRAME } from '../../lib/score.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
-import { lazySynth, playAnimated, downloadWav, log, unlog, round } from '../../lib/ui/demo.js';
+import { createShell, round } from '../../lib/ui/lesson-shell.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
-let synth = null;
-let playing = null;
-const state = { f0: 130 };
-const PITCH = [70, 400];
+// The shared shell (`lib/ui/lesson-shell.js`) keeps the pitch and does the sound.
+const shell = createShell({
+  onControl: () => replan(),
+  downloadScore: () => current && current.score,
+  downloadName: (s) => `say-${round(s.f0)}hz.wav`,
+});
 
 const EXAMPLES = [
   [t('tog.ex.1'), 'ˈhɛloʊ wɜːld'],
@@ -44,7 +45,7 @@ function replan() {
   const text = $('ipa').value;
   const unknown = unknownCharacters(text);
   $('unknown').textContent = unknown.length ? t('tog.unknown', { chars: [...new Set(unknown)].join(' ') }) : '';
-  current = plan(text, { f0: state.f0 });
+  current = plan(text, { f0: shell.state.f0 });
   const strip = $('segments');
   strip.replaceChildren();
   for (const m of current.marks) {
@@ -59,28 +60,20 @@ function replan() {
 
 // ## Saying it
 async function sayText(text = $('ipa').value) {
-  if (playing) playing.cancel();
-  const p = text === $('ipa').value ? current : plan(text, { f0: state.f0 });
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
-  playing = playAnimated(synth, p.score, (frame, time) => {
+  const p = text === $('ipa').value ? current : plan(text, { f0: shell.state.f0 });
+  await shell.play(p.score, (frame, time) => {
     drawTract($('tract'), shapeOf(frame));
     const m = markAt(p.marks, time);
     for (const b of $('segments').children) b.classList.toggle('playing', Boolean(m) && text === $('ipa').value && Number(b.dataset.index) === m.index);
     if (m) $('readout').textContent = `[${m.symbol}] ${m.type}`;
   });
-  await playing.done;
   for (const b of $('segments').children) b.classList.remove('playing');
 }
 
 // ## Controls and palette
 $('say').addEventListener('click', () => sayText());
-$('stop').addEventListener('click', () => { if (playing) playing.cancel(); if (synth) synth.stop(); });
-$('download').addEventListener('click', () => downloadWav(current.score, `say-${round(state.f0)}hz.wav`));
 $('ipa').addEventListener('input', replan);
 $('ipa').addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') sayText(); });
-$('pitch').addEventListener('input', (e) => { state.f0 = log(Number(e.target.value), ...PITCH); $('pitchOut').textContent = `${Math.round(state.f0)} Hz`; replan(); });
-$('pitch').value = unlog(state.f0, ...PITCH);
-$('pitchOut').textContent = `${Math.round(state.f0)} Hz`;
 
 for (const [label, ipa] of EXAMPLES) {
   const b = document.createElement('button');

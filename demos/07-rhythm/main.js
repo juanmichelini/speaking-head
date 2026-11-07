@@ -19,14 +19,17 @@ import { rhythmPlan, nPVI, syllableDurations, describe } from '../../lib/rhythm.
 import { DEFAULT_FRAME } from '../../lib/score.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
-import { lazySynth, playAnimated, downloadWav } from '../../lib/ui/demo.js';
+import { createShell } from '../../lib/ui/lesson-shell.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
-let synth = null;
-let playing = null;
 let current = null;
+// The shared shell (`lib/ui/lesson-shell.js`) does the sound; this page has no pitch control.
+const shell = createShell({
+  onStop: () => { compare.token = (compare.token || 0) + 1; },
+  downloadScore: () => (current || build()).score,
+  downloadName: () => `rhythm-${selectedMode()}.wav`,
+});
 
 const EXAMPLES = [
   [t('rhythm.ex.1'), 'ðə ˈkæts ɑː ˈtʃeɪsɪŋ ðə ˈmaɪs'],
@@ -78,17 +81,14 @@ function showLanes(u) {
 
 // ## Playing
 async function play(u, label = '') {
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
   showLanes(u);
-  playing = playAnimated(synth, u.score, (frame, t) => {
+  await shell.play(u.score, (frame, t) => {
     drawTract($('tract'), shapeOf(frame));
     const m = markAt(u.marks, t);
     $('readout').textContent = `${label}${m ? `[${m.symbol}]` : ''}`;
   });
-  await playing.done;
 }
 async function say() {
-  if (playing) playing.cancel();
   current = build();
   await play(current);
 }
@@ -98,7 +98,7 @@ async function say() {
 // Short and long sentence with the same three stressed words, in both rhythms. The status line
 // reports how long each one took, which is the whole point: compare the ratios.
 async function compare() {
-  if (playing) playing.cancel();
+  shell.cancelPlaying();
   const token = (compare.token = (compare.token || 0) + 1);
   const lines = [];
   for (const mode of ['stress', 'syllable']) {
@@ -127,8 +127,6 @@ $('ipa').addEventListener('input', refresh);
 for (const r of document.querySelectorAll('input[name=mode]')) r.addEventListener('change', refresh);
 $('say').addEventListener('click', say);
 $('compare').addEventListener('click', compare);
-$('stop').addEventListener('click', () => { compare.token = (compare.token || 0) + 1; if (playing) playing.cancel(); if (synth) synth.stop(); });
-$('download').addEventListener('click', () => downloadWav((current || build()).score, `rhythm-${selectedMode()}.wav`));
 $('readout').style.whiteSpace = 'pre-line';
 $('ipa').value = EXAMPLES[0][1];
 drawTract($('tract'), shapeOf(DEFAULT_FRAME));
