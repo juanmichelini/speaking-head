@@ -146,3 +146,14 @@ test('the hiss of a voiced fricative pulses with the pitch, and the hiss of a vo
     assert.ok(buzzy > 1.6 * plain, `${voiced} pulses ${buzzy.toFixed(2)} against ${plain.toFixed(2)} for ${voiceless}`);
   }
 });
+
+// The vowel and consonant instruments share one shell for sound, pitch, stop and download. Neither may
+// grow its own copy again.
+test('both lesson instruments use the shared shell instead of their own synth handling', async () => {
+  const { readFileSync } = await import('node:fs');
+  for (const file of ['lib/ui/vowel-lesson.js', 'lib/ui/consonant-lesson.js']) {
+    const src = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+    assert.match(src, /createShell/, `${file} should use createShell`);
+    assert.doesNotMatch(src, /lazySynth|playAnimated|downloadWav/, `${file} should leave synth handling to the shell`);
+  }
+});
