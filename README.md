@@ -37,6 +37,9 @@ that lead up to it:
 - **3.1, tones:** one vowel with its pitch contour as the only free thing: five levels (Chao's tone letters), drawn on a pad
   or chosen from the four Mandarin tones; then lesson 3 joins vowels and consonants.
 
+How every lesson composes from the simpler ones (input, range, output, built on) is in
+[`docs/composition.md`](docs/composition.md), generated from `lib/composition.js` and checked against the code's imports by a test.
+
 **All eight experiments are live.** They have been checked numerically and by smoke tests, but a human ear and a
 real-browser pass are still the best next contribution; see "Status" in the plan.
 
