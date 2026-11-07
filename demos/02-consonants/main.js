@@ -68,10 +68,10 @@ async function press(symbol) {
   const g = gestureOf(symbol);
   // Between vowels: "a C a C a" at natural speed. Alone: five times as long as the gesture's natural
   // length, so each phase of it (closure, burst, release, glide) can be heard on its own.
-  // (A stop alone is not stretched: there is nothing to hear while it is shut, so that would only be a longer
-  // wait for the burst; see `quick` in `consonants.js`.)
+  // (A stop, an affricate or a tap alone is not stretched: these are quick by nature; see `quick` in
+  // `consonants.js`.)
   const c = consonantBySymbol(symbol);
-  const quickStop = kindOf(c) === 'stop' && c.symbol !== 'ʔ';
+  const quickStop = ['stop', 'affricate', 'tap'].includes(kindOf(c)) && c.symbol !== 'ʔ';
   const score = state.carrier === 'none'
     ? scaleTime(g.score, quickStop ? 1 : SINGLE_PRESS_STRETCH)
     : betweenVowels(consonantBySymbol(symbol), { f0: state.f0, carrier: carrierShape(), aspirated: state.aspirated }).score;
