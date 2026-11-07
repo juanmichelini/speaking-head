@@ -16,6 +16,16 @@
 //
 // The two directions are not equally easy. Going back is the interesting part, and the end of this
 // file measures exactly how interesting.
+//
+// ## What later lessons take from this one
+//
+// Two layers live here, and only the first is built on:
+//
+// - **The chart**: `Vowel`, `Tongue` (backness, height, rounding) and `ofIpa`. Lesson 3's `VowelShape` starts from
+//   these coordinates and turns them into a calibrated tongue, jaw and lip shape for the engine.
+// - **The abstract acoustics**: `toSound`, `fromSound` and `render` (a two-formant toy synth). They are this
+//   lesson's own claim, that a mouth and a pair of formants correspond, and stay here as the teaching version of
+//   it. The engine-based lessons measure real formants from the tract instead (`lib/analysis.js`).
 module IpaTrombone.TongueSpace
 
 open System
