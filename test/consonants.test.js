@@ -246,3 +246,20 @@ test('a voiced stop pressed on its own is just as quick, and about as loud as an
     assert.ok(g.hold.end - g.hold.start < 0.06, `${symbol}: closure ${(g.hold.end - g.hold.start).toFixed(3)} s`);
   }
 });
+
+test('an affricate pressed on its own is as quick as a stop, and its hiss is about as loud as an s', () => {
+  const sound = (symbol) => {
+    const { samples } = play(symbol, { carrier: null });
+    let pk = 0;
+    for (const v of samples) pk = Math.max(pk, Math.abs(v));
+    let first = 0;
+    while (first < samples.length && Math.abs(samples[first]) < 0.05 * pk) first++;
+    return { pk, first: first / RATE };
+  };
+  const s = sound('s');
+  for (const symbol of ['t͡s', 't͡ʃ', 'p͡f', 'ʈ͡ʂ', 't͡ɕ', 'd͡z', 'd͡ʒ', 'b͡v']) {
+    const r = sound(symbol);
+    assert.ok(r.first < 0.08, `${symbol}: first sound at ${r.first.toFixed(3)} s`);
+    assert.ok(r.pk > 0.4 * s.pk, `${symbol}: peak ${r.pk.toFixed(2)} against s ${s.pk.toFixed(2)}`);
+  }
+});

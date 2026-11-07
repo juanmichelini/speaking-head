@@ -744,9 +744,11 @@ let private affricate (c: Consonant) (spec: Spec) (x: Ctx) (tl: Timeline) : Time
     let o = x.Opts
     let tr = o.TransitionScale
     let voiced = c.Voiced
-    let closeAt = x.Lead + (Timing.close * tr)
-    let releaseAt = closeAt + (Option.defaultValue Timing.stopHold o.HoldFor)
+    let closeAt = x.Lead + (if x.Quick then Timing.quickClose else Timing.close * tr)
+    let releaseAt = closeAt + (Option.defaultValue (if x.Quick then (if voiced then Timing.quickHoldVoiced else Timing.quickHold) else Timing.stopHold) o.HoldFor)
     let k = c0Of spec
+    // On its own the hiss comes up to the level of an `s`, as it does for a fricative (see `aloneHiss`).
+    let hiss = if x.WithVowel then k.Noise else max k.Noise (aloneHiss k.Index)
     let after = if x.WithVowel then Timing.afterCarrier else Timing.afterNone
     let released = releaseAt + 0.006 + Timing.affricateFrication + (Timing.opening * tr)
     let built =
@@ -760,7 +762,7 @@ let private affricate (c: Consonant) (spec: Spec) (x: Ctx) (tl: Timeline) : Time
                 Tenseness = (if voiced then 0.5 else 0.6) })
         |> Timeline.at releaseAt id
         |> Timeline.at (releaseAt + 0.006) (fun f ->
-            { f with C0d = k.Diameter; C0n = k.Noise; NoiseHz = spec.Hz; Intensity = (if voiced then voiceGain k.Noise k.Diameter else 0.0) })
+            { f with C0d = k.Diameter; C0n = hiss; NoiseHz = spec.Hz; Intensity = (if voiced then voiceGain k.Noise k.Diameter else 0.0) })
         |> Timeline.at (releaseAt + 0.006 + Timing.affricateFrication) id
         |> Timeline.at released (fun f ->
             { f with C0d = 3.0; C0n = 0.0; Intensity = (if x.WithVowel then 1.0 else 0.0); Tenseness = 0.6 })
@@ -824,7 +826,7 @@ let gestureWith (options: Options) (c: Consonant) : Gesture =
     let alone = (kind = Kind.Tap) && Option.isNone options.Carrier
     // A stop pressed on its own has nothing to hear while it is shut (a voiceless one is silent, a voiced one
     // only murmurs), so it is made as quick as the recordings' stops, and the press is the release.
-    let quick = (kind = Kind.Stop) && Option.isNone options.Carrier && c.Symbol <> "ʔ"
+    let quick = (kind = Kind.Stop || kind = Kind.Affricate) && Option.isNone options.Carrier && c.Symbol <> "ʔ"
     let lead = if alone then Timing.leadAlone elif withVowel then Timing.leadCarrier elif quick then Timing.quickLead else Timing.leadNone
     let spec = specOf c
     let ctx = { Opts = options; WithVowel = withVowel; Alone = alone; Quick = quick; Lead = lead; Base = baseFrame }
