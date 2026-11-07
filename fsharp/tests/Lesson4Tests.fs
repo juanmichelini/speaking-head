@@ -5,6 +5,7 @@ open Expecto
 open FsCheck
 open IpaTrombone.G2p
 open IpaTrombone.Languages
+open IpaTrombone.Syllables
 
 let private wordsFrom (alphabet: string) : Arbitrary<string> =
     Gen.elements (alphabet.ToCharArray())
@@ -103,6 +104,26 @@ let indonesianTests =
 
         testProperty "any spelling gives at most one stress mark, and never throws" (Prop.forAll indonesianWords (fun w ->
             count 'ˈ' (indonesianToIpa w) <= 1))
+    ]
+
+[<Tests>]
+let syllableTests =
+    testList "Lesson 4: where a syllable begins" [
+
+        test "the onset grows while the last consonants can start a word, up to the maximum" {
+            let pairs = set [ "pr"; "tr" ]
+            let can (cs: string list) =
+                match cs with
+                | [ _ ] -> true
+                | [ a; b ] -> pairs.Contains(a + b)
+                | _ -> false
+            Expect.equal (onsetLength can 2 []) 0 "nothing between the vowels"
+            Expect.equal (onsetLength can 2 [ "p" ]) 1 "a lone consonant starts the next syllable"
+            Expect.equal (onsetLength can 2 [ "n"; "t"; "r" ]) 2 "tr starts a word, so n stays behind"
+            Expect.equal (onsetLength can 2 [ "s"; "t" ]) 1 "st is not a cluster here"
+            Expect.equal (onsetLength can 1 [ "p"; "r" ]) 1 "the maximum wins"
+            Expect.equal (onsetLength (fun _ -> false) 3 [ "x"; "y" ]) 0 "nothing can start: all stay behind"
+        }
     ]
 
 let private entriesOf (text: string) : Dictionary = parseDictionary text

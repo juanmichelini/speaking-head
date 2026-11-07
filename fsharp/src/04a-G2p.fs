@@ -20,6 +20,8 @@
 // each takes the answer of the one before and none of them can reach back and change it.
 module IpaTrombone.G2p
 
+open IpaTrombone.Syllables
+
 // ## A phone
 //
 // One sound of the word, with flags the later passes need:
@@ -84,12 +86,14 @@ let syllabify (clusters: Set<string>) (phones: Phone list) : Phone list list =
                 List.rev ((nucleus @ slice j k) :: finished)
             else
                 let between = k - j
-                let keep =
-                    if between >= 2 then
-                        let lastTwo = all.[k - 2].Sound + all.[k - 1].Sound
-                        if clusters.Contains lastTwo then between - 2 else between - 1
-                    else
-                        0
+                // A lone consonant starts the next syllable; two do only if they form one of the language's
+                // clusters. What the onset does not take stays behind as this syllable's coda.
+                let startsWord (cs: Phone list) : bool =
+                    match cs with
+                    | [ _ ] -> true
+                    | [ a; b ] -> clusters.Contains(a.Sound + b.Sound)
+                    | _ -> false
+                let keep = between - onsetLength startsWord 2 (slice j k)
                 go (j + keep) [] ((nucleus @ slice j (j + keep)) :: finished)
     go 0 [] []
 

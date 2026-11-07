@@ -25,6 +25,7 @@ module IpaTrombone.Rhythms
 open IpaTrombone.Languages
 open IpaTrombone.Ipa
 open IpaTrombone.Planner
+open IpaTrombone.Syllables
 
 let private stops : Set<string> = set [ "p"; "b"; "t"; "d"; "k"; "ɡ"; "c"; "ɟ"; "q" ]
 let private fricatives : Set<string> = set [ "f"; "v"; "θ"; "ʃ"; "ɸ"; "β"; "x"; "ɣ"; "h" ]
@@ -106,10 +107,8 @@ let syllabify (text: string) : SyllableInfo list =
         match pending |> Array.tryFindIndex (fun k -> (sound k).Stress > 0) with
         | Some stressAt -> stressAt
         | None ->
-            let tailFrom (split: int) : string list = [ for x in split - 1 .. pending.Length - 1 -> (sound pending.[x]).Symbol ]
-            let rec shrink (split: int) : int =
-                if split > 0 && canStart (tailFrom split) && pending.Length - split + 1 <= 3 then shrink (split - 1) else split
-            shrink pending.Length
+            let startsWord (ks: int list) : bool = canStart [ for k in ks -> (sound k).Symbol ]
+            pending.Length - onsetLength startsWord 3 (List.ofArray pending)
     let step (w: Walk) (i: int) : Walk =
         match segs.[i] with
         | Unknown _ -> w
