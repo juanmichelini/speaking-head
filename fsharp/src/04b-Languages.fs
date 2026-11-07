@@ -30,6 +30,12 @@ open System
 open System.Globalization
 open IpaTrombone.G2p
 
+// ## Prosody as data
+//
+// `Range` and `Drift` say how much of the pitch movement a language uses (see `lib/languages.js`, which this
+// mirrors): settings for the model, not measurements. `Range` multiplies the voice's pitch range and so every stress
+// bump and tone contour; `Drift` multiplies the voice's downward drift over a statement.
+//
 // ## Rhythm class
 //
 // Each language is tagged `Stress` or `Syllable` for the rhythm lesson. This is the traditional
@@ -45,14 +51,20 @@ type Rhythm =
 type Language =
     { Code: string
       Rhythm: Rhythm
+      /// Multiplies the voice's pitch range: how much a language moves pitch for stress and tone.
+      Range: float
+      /// Multiplies the voice's downward drift over a statement.
+      Drift: float
       Name: string
       Native: string
       Rules: (string -> string) option
       Sample: string }
 
-let private language code rhythm name native rules sample : Language =
+let private language code rhythm range drift name native rules sample : Language =
     { Code = code
       Rhythm = rhythm
+      Range = range
+      Drift = drift
       Name = name
       Native = native
       Rules = rules
@@ -60,16 +72,16 @@ let private language code rhythm name native rules sample : Language =
 
 let languages : Language list =
     [
-        language "en" Stress "English" "English" None "hello world"
-        language "es" Syllable "Spanish" "Español" (Some spanishToIpa) "hola mundo"
-        language "zh" Syllable "Mandarin Chinese" "普通话" None "ni3hao3"
-        language "hi" Syllable "Hindi" "हिन्दी" None "namaste"
-        language "ar" Stress "Arabic (Standard)" "العربية" None "marhaban salaam"
-        language "fr" Syllable "French" "Français" None "bonjour le monde"
-        language "bn" Syllable "Bengali" "বাংলা" None "nomoshkar"
-        language "pt" Stress "Portuguese (Brazil)" "Português" None "olá mundo"
-        language "ru" Stress "Russian" "Русский" None "привет мир"
-        language "id" Syllable "Indonesian" "Bahasa Indonesia" (Some indonesianToIpa) "halo dunia"
+        language "en" Stress 1.0 1.0 "English" "English" None "hello world"
+        language "es" Syllable 0.8 1.0 "Spanish" "Español" (Some spanishToIpa) "hola mundo"
+        language "zh" Syllable 1.0 0.6 "Mandarin Chinese" "普通话" None "ni3hao3"
+        language "hi" Syllable 0.7 1.0 "Hindi" "हिन्दी" None "namaste"
+        language "ar" Stress 0.9 1.0 "Arabic (Standard)" "العربية" None "marhaban salaam"
+        language "fr" Syllable 0.5 1.0 "French" "Français" None "bonjour le monde"
+        language "bn" Syllable 0.7 1.0 "Bengali" "বাংলা" None "nomoshkar"
+        language "pt" Stress 0.9 1.0 "Portuguese (Brazil)" "Português" None "olá mundo"
+        language "ru" Stress 1.1 1.0 "Russian" "Русский" None "привет мир"
+        language "id" Syllable 0.6 1.0 "Indonesian" "Bahasa Indonesia" (Some indonesianToIpa) "halo dunia"
     ]
 
 let languageByCode (code: string) : Language option =

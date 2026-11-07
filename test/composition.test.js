@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { LANGUAGES } from '../lib/languages.js';
 import { LAYERS, LESSONS, FSHARP_ONLY, levelOf, compositionMarkdown } from '../lib/composition.js';
 import { demos } from '../lib/demos.js';
 
@@ -42,5 +43,5 @@ test('every file a lesson names exists', () => {
 });
 
 test('docs/composition.md is the generated table', () => {
-  assert.equal(readFileSync(new URL('../docs/composition.md', import.meta.url), 'utf8'), compositionMarkdown(), 'run node scripts/composition-doc.mjs');
+  assert.equal(readFileSync(new URL('../docs/composition.md', import.meta.url), 'utf8'), compositionMarkdown(LANGUAGES), 'run node scripts/composition-doc.mjs');
 });

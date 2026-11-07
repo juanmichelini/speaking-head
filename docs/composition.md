@@ -51,3 +51,23 @@ A module may import only from a lower level.
 - **3:** `planner`, `accents`
 - **4:** `voices`, `rhythm`, `languages`
 - **5:** `pipeline`, `melody`
+
+## Prosody by language
+
+Stress, tone, intonation and melody are one thing, pitch over time in semitones (`lib/prosody.js`), and a language
+is a few settings on top: how it times syllables, and how much pitch movement it uses. A `ˈ` in the IPA is a
+stress and a Chao letter is a tone in every language; what differs is the table below. These are settings for the
+model, not measurements.
+
+| Language | Rhythm | Range (× the voice's) | Drift (× the voice's) |
+|---|---|---|---|
+| English | stress | 1 | 1 |
+| Spanish | syllable | 0.8 | 1 |
+| Mandarin Chinese | syllable | 1 | 0.6 |
+| Hindi | syllable | 0.7 | 1 |
+| Arabic (Standard) | stress | 0.9 | 1 |
+| French | syllable | 0.5 | 1 |
+| Bengali | syllable | 0.7 | 1 |
+| Portuguese (Brazil) | stress | 0.9 | 1 |
+| Russian | stress | 1.1 | 1 |
+| Indonesian | syllable | 0.6 | 1 |
