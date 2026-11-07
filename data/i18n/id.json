@@ -320,5 +320,17 @@
  "lesson.steps": "Selangkah demi selangkah:",
  "lesson.tab": "{n} · {title} · 🗣️ Speaking Head",
  "lesson.axis.attr": "Tempat artikulasi",
- "lesson.axis.hint": "Tekan garis dan geser. Tahan sebuah simbol untuk mendengar persis yang itu."
+ "lesson.axis.hint": "Tekan garis dan geser. Tahan sebuah simbol untuk mendengar persis yang itu.",
+ "demo.10.title": "Menyanyi",
+ "demo.10.blurb": "Beri setiap suku kata sebuah nada: tinggi dan panjangnya dari musik.",
+ "lesson.10.intro": "Menyanyi adalah berbicara dengan tinggi nada dan panjang setiap suku kata yang dipilih orang lain. Setiap suku kata mendapat sebuah nada: tingginya (C4 adalah do tengah, A4 adalah 440 Hz) dan ketukannya, seperti C4:2. Pelajaran 7 menyesuaikan suku kata dengan waktu, dan garis nada pelajaran 3 membawa nadanya.",
+ "sing.a1": "Baca kode melodi",
+ "sing.ipa": "Suku kata (IPA)",
+ "sing.notes": "Nada",
+ "sing.example": "Contoh",
+ "sing.example.scale": "Tangga nada",
+ "sing.example.birthday": "Lagu ulang tahun",
+ "sing.tempo": "Tempo",
+ "sing.sing": "Nyanyikan",
+ "sing.empty": "Tulis setidaknya satu nada, seperti C4."
 }

@@ -38,6 +38,7 @@ adds a stage.
 | 7 | a rhythm: stress-timed or syllable-timed | a duration per syllable | per-sound duration overrides for lesson 3's planner | 3 |
 | 8 | IPA and a set of rewrite rules | rules from one sound to another, in context | IPA again (then lesson 3), optionally timed by lesson 7 | 3, 7 |
 | 9 | text, a language, an accent, a rhythm, a rate and a voice | the ten languages and eight accents, rate 0.4–3.5, eleven voices | a score and the tract length to play it with, plus the IPA before and after the accent | 3, 4, 5, 6, 7, 8 |
+| 10 | syllables as IPA and a note for each (pitch name, beats) | notes C-1 to B9 as MIDI numbers, beats above 0, tempo 40–200 | a score whose f0 follows the notes and whose syllables last their beats | 3, 7, 5 |
 | F# 9 | a score and render options | sample rate, tract length, seed | samples (float32) | 3 |
 
 ## Layers
@@ -49,4 +50,4 @@ A module may import only from a lower level.
 - **2:** `audio`, `between`, `ipa`
 - **3:** `planner`, `accents`
 - **4:** `voices`, `rhythm`, `languages`
-- **5:** `pipeline`
+- **5:** `pipeline`, `melody`

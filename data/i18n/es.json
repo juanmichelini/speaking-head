@@ -320,5 +320,17 @@
  "lesson.steps": "Paso a paso:",
  "lesson.tab": "{n} · {title} · 🗣️ Speaking Head",
  "lesson.axis.attr": "Lugar de articulación",
- "lesson.axis.hint": "Pulsa la línea y desliza. Mantén un símbolo para oír exactamente ese."
+ "lesson.axis.hint": "Pulsa la línea y desliza. Mantén un símbolo para oír exactamente ese.",
+ "demo.10.title": "Canto",
+ "demo.10.blurb": "Dale una nota a cada sílaba: altura y duración vienen de la música.",
+ "lesson.10.intro": "Cantar es hablar con la altura y la duración de cada sílaba elegidas por otra persona. Cada sílaba recibe una nota: su altura (C4 es el do central, A4 son 440 Hz) y sus tiempos, como C4:2. La lección 7 ajusta la sílaba al tiempo y la línea de tono de la lección 3 lleva la nota.",
+ "sing.a1": "Leer el código de la melodía",
+ "sing.ipa": "Sílabas (AFI)",
+ "sing.notes": "Notas",
+ "sing.example": "Ejemplo",
+ "sing.example.scale": "Una escala",
+ "sing.example.birthday": "Una canción de cumpleaños",
+ "sing.tempo": "Tempo",
+ "sing.sing": "Cantar",
+ "sing.empty": "Escribe al menos una nota, como C4."
 }

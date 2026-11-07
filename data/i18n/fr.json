@@ -320,5 +320,17 @@
  "lesson.steps": "Pas à pas :",
  "lesson.tab": "{n} · {title} · 🗣️ Speaking Head",
  "lesson.axis.attr": "Lieu d'articulation",
- "lesson.axis.hint": "Appuyez sur la ligne et glissez. Maintenez un symbole pour entendre exactement celui-là."
+ "lesson.axis.hint": "Appuyez sur la ligne et glissez. Maintenez un symbole pour entendre exactement celui-là.",
+ "demo.10.title": "Chant",
+ "demo.10.blurb": "Donnez une note à chaque syllabe : hauteur et durée viennent de la musique.",
+ "lesson.10.intro": "Chanter, c'est parler avec la hauteur et la durée de chaque syllabe choisies par quelqu'un d'autre. Chaque syllabe reçoit une note : sa hauteur (C4 est le do central, A4 fait 440 Hz) et ses temps, comme C4:2. La leçon 7 cale la syllabe dans le temps et la ligne de hauteur de la leçon 3 porte la note.",
+ "sing.a1": "Lire le code de la mélodie",
+ "sing.ipa": "Syllabes (API)",
+ "sing.notes": "Notes",
+ "sing.example": "Exemple",
+ "sing.example.scale": "Une gamme",
+ "sing.example.birthday": "Un air d'anniversaire",
+ "sing.tempo": "Tempo",
+ "sing.sing": "Chanter",
+ "sing.empty": "Écrivez au moins une note, comme C4."
 }
