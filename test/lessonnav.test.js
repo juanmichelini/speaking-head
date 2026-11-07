@@ -21,7 +21,8 @@ test('neighbours walk the ladder in order and stop at the ends', () => {
   assert.equal(neighbours('03-together').previous.slug, '03.2-intonation');
   assert.equal(neighbours('04-languages').previous.slug, '03-together');
   assert.equal(neighbours('08-accents').next.slug, '09-everything');
-  assert.equal(neighbours('09-everything').next, null);
+  assert.equal(neighbours('09-everything').next.slug, '10-singing');
+  assert.equal(neighbours('10-singing').next, null);
   assert.deepEqual(neighbours('nope').position, 0);
 });
 

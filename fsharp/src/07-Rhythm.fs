@@ -240,11 +240,10 @@ type RhythmPlan =
 
 let private minimumVowel = 0.045
 
-let rhythmPlan (mode: Rhythm) (options: RhythmOptions) (text: string) : RhythmPlan =
+// Given how long each syllable should last (from a rhythm, or from the notes of a melody), the overrides that
+// get there: squeeze consonants where the syllable is tight, then give the vowel the rest.
+let fitDurations (text: string) (syllables: SyllableInfo list) (durations: float list) (reduceBelow: float) : (int * Override) list =
     let segs = segmentsOf text
-    let syllables = syllabify text
-    let durations = durationsFor mode options syllables
-    let reduceBelow = Option.defaultValue (if mode = Rhythm.Stress then 0.07 else 0.0) options.ReduceBelow
     let consonantsOf (s: SyllableInfo) : int list = s.Segments |> List.filter (fun k -> not (List.contains k s.Nucleus))
     // How long the consonants of a syllable come out in a given plan.
     let spent (marks: Mark list) (s: SyllableInfo) : float =
@@ -300,9 +299,15 @@ let rhythmPlan (mode: Rhythm) (options: RhythmOptions) (text: string) : RhythmPl
                         Map.add k o m)
                     acc)
             squeezes
+    Map.toList overrides
+
+let rhythmPlan (mode: Rhythm) (options: RhythmOptions) (text: string) : RhythmPlan =
+    let syllables = syllabify text
+    let durations = durationsFor mode options syllables
+    let reduceBelow = Option.defaultValue (if mode = Rhythm.Stress then 0.07 else 0.0) options.ReduceBelow
     { Syllables = syllables
       Durations = durations
-      Overrides = Map.toList overrides }
+      Overrides = fitDurations text syllables durations reduceBelow }
 
 // ## Measuring rhythm
 //

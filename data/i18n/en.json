@@ -320,5 +320,17 @@
  "lesson.steps": "Step by step:",
  "lesson.tab": "{n} · {title} · 🗣️ Speaking Head",
  "lesson.axis.attr": "Place of articulation",
- "lesson.axis.hint": "Press the line and slide. Hold a symbol to hear exactly that one."
+ "lesson.axis.hint": "Press the line and slide. Hold a symbol to hear exactly that one.",
+ "demo.10.title": "Singing",
+ "demo.10.blurb": "Give each syllable a note: pitch and length from the music.",
+ "lesson.10.intro": "Singing is speech where someone else chose the pitch and the length of every syllable. Each syllable gets a note: its pitch (C4 is middle C, A4 is 440 Hz) and its beats, like C4:2. Lesson 7 fits the syllable into the time, and lesson 3's pitch line carries the note.",
+ "sing.a1": "Read the melody code",
+ "sing.ipa": "Syllables (IPA)",
+ "sing.notes": "Notes",
+ "sing.example": "Example",
+ "sing.example.scale": "A scale",
+ "sing.example.birthday": "A birthday tune",
+ "sing.tempo": "Tempo",
+ "sing.sing": "Sing",
+ "sing.empty": "Write at least one note, like C4."
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>10 · Singing · 🗣️ Speaking Head</title>
+<meta content="Give each syllable a note: pitch and length from the music." data-i18n-attr="content:demo.10.blurb" name="description"/>
+<link href="/css/site.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="top">
+<a href="/"><strong>🗣️ Speaking Head</strong></a>
+<span>10 · <span data-i18n="demo.10.title">Singing</span></span>
+<a data-i18n="d01.a3" href="/literate/?src=fsharp/src/07b-Melody.fs">Read the lesson (F#)</a>
+<a data-i18n="d01.a1" href="/literate/?src=demos/10-singing/main.js">Read this demo's source</a>
+<a data-i18n="sing.a1" href="/literate/?src=lib/melody.js">Read the melody code</a>
+</nav>
+<h1 data-i18n="demo.10.title">Singing</h1>
+<p data-i18n="lesson.10.intro">Singing is speech where someone else chose the pitch and the length of every syllable. Each syllable gets a note: its pitch (C4 is middle C, A4 is 440 Hz) and its beats, like C4:2. Lesson 7 fits the syllable into the time, and lesson 3's pitch line carries the note.</p>
+<section class="panel">
+<label class="note" data-i18n="sing.ipa" for="text">Syllables (IPA)</label>
+<textarea id="text" rows="2" spellcheck="false" style="width:100%;font-size:1.3rem"></textarea>
+<label class="note" data-i18n="sing.notes" for="notes">Notes</label>
+<textarea id="notes" rows="2" spellcheck="false" style="width:100%;font-size:1.3rem"></textarea>
+<div class="row">
+<label><span data-i18n="sing.example">Example</span> <select id="example"></select></label>
+<label><span data-i18n="sing.tempo">Tempo</span> <input id="bpm" max="200" min="40" step="1" type="range"/> <output id="bpmOut"></output></label>
+<label><span data-i18n="d05.h11">Voices</span> <select id="voice"></select></label>
+</div>
+<div class="row" style="margin-top:.6rem">
+<button class="primary" data-i18n="sing.sing" id="say">Sing</button>
+<button data-i18n="d01.button3" id="stop">Stop</button>
+<button data-i18n="d01.button4" id="download">Download WAV</button>
+</div>
+<svg aria-label="Notes" id="roll" viewBox="0 0 600 120" style="width:100%;height:auto" role="img"></svg>
+<p class="note" id="status" role="status"></p>
+</section>
+<section aria-label="Vocal tract" class="panel" data-i18n-attr="aria-label:d01.attr2">
+<canvas aria-label="Side view of the vocal tract" height="620" id="tract" width="560"></canvas>
+<p aria-live="polite" class="readout" id="readout" role="status"></p>
+</section>
+<script src="/demos/10-singing/main.js" type="module"></script>
+<script src="/lib/ui/lessonnav.js" type="module"></script>
+</body>
+</html>

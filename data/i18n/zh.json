@@ -320,5 +320,17 @@
  "lesson.steps": "循序渐进：",
  "lesson.tab": "{n} · {title} · 🗣️ Speaking Head",
  "lesson.axis.attr": "发音部位",
- "lesson.axis.hint": "按住这条线并滑动。按住某个符号可以只听那一个。"
+ "lesson.axis.hint": "按住这条线并滑动。按住某个符号可以只听那一个。",
+ "demo.10.title": "歌唱",
+ "demo.10.blurb": "给每个音节一个音符：音高和时长都来自音乐。",
+ "lesson.10.intro": "唱歌就是由别人决定每个音节的音高和长度的说话。每个音节对应一个音符：它的音高（C4 是中央 C，A4 是 440 Hz）和拍数，例如 C4:2。第 7 课把音节放进时间里，第 3 课的音高线承载音符。",
+ "sing.a1": "阅读旋律代码",
+ "sing.ipa": "音节（国际音标）",
+ "sing.notes": "音符",
+ "sing.example": "示例",
+ "sing.example.scale": "一个音阶",
+ "sing.example.birthday": "生日歌",
+ "sing.tempo": "速度",
+ "sing.sing": "唱",
+ "sing.empty": "请至少写一个音符，例如 C4。"
 }

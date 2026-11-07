@@ -5,6 +5,7 @@ open IpaTrombone.Languages
 open IpaTrombone.Ipa
 open IpaTrombone.Planner
 open IpaTrombone.Rhythms
+open IpaTrombone.Melody
 
 let private sentence = "ðə ˈkæts ɑː ˈtʃeɪsɪŋ ðə ˈmaɪs ɪn ðə ˈɡɑːdən"
 
@@ -110,5 +111,35 @@ let rhythmTests =
         test "vowelDurations merges a diphthong into one interval" {
             let p = plan defaultPlanOptions "ta ˈmaɪ"
             Expect.equal (vowelDurations p.Marks |> List.length) 2 "a, then aɪ"
+        }
+    ]
+
+[<Tests>]
+let melodyTests =
+    testList "Lesson 3.3: melody is speech with the pitch and length given by notes" [
+
+        test "note names are MIDI numbers" {
+            Expect.equal (midiOf "C4") (Some 60) "middle C"
+            Expect.equal (midiOf "A4") (Some 69) "concert A"
+            Expect.equal (midiOf "F#3") (Some 54) "sharp"
+            Expect.equal (midiOf "Bb4") (Some 70) "flat"
+            Expect.equal (midiOf "h4") None "not a note"
+        }
+
+        test "parseNotes reads beats and drops what is not a note" {
+            let notes = parseNotes "C4 D4:2 hello E4:x"
+            Expect.equal (notes |> List.map (fun n -> n.Midi, n.Beats)) [ (60, 1.0); (62, 2.0) ] "two notes"
+        }
+
+        test "each syllable is sung at its note and lasts its beats" {
+            let song = sing 120.0 id "ˈhæpi ˈbɜːθdeɪ" (parseNotes "C4 C4 D4:2 C4:2")
+            Expect.equal song.Notes.Length 4 "one note per syllable"
+            let length (n: SungNote) = n.End - n.Start
+            Expect.isTrue (length song.Notes.[2] > 1.7 * length song.Notes.[1]) "two beats last about twice one"
+            Expect.isTrue (abs (length song.Notes.[1] - 0.5) < 0.08) "a beat at 120 is half a second"
+        }
+
+        test "a melody needs a note" {
+            Expect.throws (fun () -> sing 100.0 id "ˈa" [] |> ignore) "empty melody"
         }
     ]
