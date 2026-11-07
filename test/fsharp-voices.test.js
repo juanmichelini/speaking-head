@@ -9,7 +9,7 @@ import { VOICES, voiceById, speak, whisperScore, formantScale } from '../lib/voi
 // The compiled files exist only after the F# build (see `fsharp/README.md`). Without it the tests
 // skip; the `fsharp` workflow sets REQUIRE_CORE so a missing build is a failure there.
 const dir = new URL('../core/src/', import.meta.url);
-const built = existsSync(new URL('05-Voices.js', dir)) && existsSync(new URL('03c-Planner.js', dir));
+const built = existsSync(new URL('05-Voices.js', dir)) && existsSync(new URL('03d-Planner.js', dir));
 if (!built && process.env.REQUIRE_CORE) throw new Error('Error: core/src/05-Voices.js was not built');
 const skip = built ? false : 'core/ is not built: see fsharp/README.md';
 const fs = built ? await import(new URL('05-Voices.js', dir).href) : null;

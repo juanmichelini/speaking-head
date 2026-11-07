@@ -26,6 +26,7 @@ open IpaTrombone.Score
 open IpaTrombone.Consonants
 open IpaTrombone.VowelShape
 open IpaTrombone.Ipa
+open IpaTrombone.Prosody
 
 // ## Timing parameters
 //
@@ -69,9 +70,6 @@ let timing : Timings =
       ToneFactor = 1.4
       ToneStep = 0.12 }
 
-// The pitch bump for a stressed syllable: primary stress is a little higher than secondary.
-let private accent : float list = [ 1.0; 1.05; 1.1 ]
-
 // The tongue and lips at rest, read back from lesson 2's `neutral` so the two never disagree.
 let neutralShape : Shape = shapeOfFrame (neutral defaultFrame)
 
@@ -102,7 +100,7 @@ let scaleForRate (t: Timings) (rate: float) : Timings =
 // distance below. `peak` is the pitch without a tone (the stress accent included); `range` is the voice's
 // liveliness (0 is flat, 1 is normal).
 let toneHz (step: float) (range: float) (peak: float) (level: int) : float =
-    peak * (2.0 ** (float (level - 3) * step * range))
+    hzAt peak (levelSemitones step level * range)
 
 // How far a vowel of duration `d` gets toward its target. Full at `below` seconds or longer,
 // falling to 55 % at 0.04 s. Below that the tongue barely moves.
@@ -180,17 +178,6 @@ let syllableRate (marks: Mark list) (duration: float) : float =
 let markAt (marks: Mark list) (t: float) : Mark option =
     marks |> List.takeWhile (fun m -> m.Start <= t) |> List.tryLast
 
-// ## Declination
-//
-// Pitch in a statement drifts downward from start to end. Applying it after planning means no other
-// part of the planner needs to know about it.
-let private applyDeclination (amount: float) (score: Score) : Score =
-    let total = if score.Duration = 0.0 then 1.0 else score.Duration
-    { score with
-        Keyframes =
-            score.Keyframes
-            |> List.map (fun k -> { k with Frame = { k.Frame with F0 = k.Frame.F0 * (1.0 - amount * (k.T / total)) } }) }
-
 // ## The walk
 //
 // The state the fold carries from one segment to the next.
@@ -250,13 +237,12 @@ let planTokens (o: PlanOptions) (input: Token list) : Plan =
         let d0 = vowelSeconds s k
         let voiced = s.Voicing <> Some false
         let shape = undershoot tm.UndershootBelow d0 (shapeOrFail (symbolOf s k))
-        let peak = o.F0 * (1.0 + (List.item s.Stress accent - 1.0) * o.Range)
         let d = if s.Tone.IsSome then d0 * tm.ToneFactor else d0
         let start = state.Time
-        // A tone is a list of pitch levels (5 high, 1 low) spread evenly across the vowel.
-        let levels = Option.defaultValue [ 3 ] s.Tone
-        let hz (level: int) : float =
-            if s.Tone.IsSome then toneHz tm.ToneStep o.Range peak level else peak
+        // The vowel's pitch is a contour in semitones around the base pitch (stress and tone add: `Prosody`),
+        // spread evenly across the vowel.
+        let levels = contourOf tm.ToneStep o.Range s.Stress s.Tone
+        let hz (semitones: float) : float = hzAt o.F0 semitones
         let glide = min tm.Glide (d * 0.4)
         let source (f: Frame) : Frame =
             { f with
@@ -374,7 +360,7 @@ let planTokens (o: PlanOptions) (input: Token list) : Plan =
             (final.Time + tm.EndFade)
             (fun f -> { f with Intensity = 0.0; Aspiration = 0.0; C0n = 0.0; C1n = 0.0 })
             final.Line
-    let score = faded |> Timeline.toScore |> applyDeclination o.Declination
+    let score = faded |> Timeline.toScore |> applyLine (declination o.Declination)
     { Score = score
       Marks = List.rev final.Marks
       Duration = score.Duration }

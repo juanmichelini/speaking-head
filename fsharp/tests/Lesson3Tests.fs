@@ -8,6 +8,7 @@ open IpaTrombone.Score
 open IpaTrombone.VowelShape
 open IpaTrombone.Ipa
 open IpaTrombone.Planner
+open IpaTrombone.Prosody
 
 let private close (a: float) (b: float) = abs (a - b) < 1e-9
 
@@ -210,6 +211,18 @@ let plannerTests =
             let p = plan { defaultPlanOptions with Declination = 0.2 } "a a a a a a"
             let voiced = p.Score.Keyframes |> List.filter (fun k -> k.Frame.Intensity > 0.9)
             Expect.isTrue ((List.last voiced).Frame.F0 < (List.head voiced).Frame.F0 * 0.9) "later is lower"
+        }
+
+        test "pitch is measured in semitones, and stress and tone add" {
+            Expect.isTrue (close (hzAt 130.0 0.0) 130.0) "0 semitones is the base pitch"
+            Expect.isTrue (abs (hzAt 130.0 12.0 - 260.0) < 1e-9) "twelve semitones is an octave"
+            Expect.isTrue (abs (semitonesOf (ratioOf 5.0) - 5.0) < 1e-12) "ratios and semitones are inverses"
+            Expect.equal (contourOf toneStep 1.0 0 None) [ 0.0 ] "no stress and no tone is the base pitch"
+            let fall = contourOf toneStep 1.0 0 (Some [ 5; 1 ])
+            Expect.isTrue (List.head fall > 0.0 && List.last fall < 0.0) "a falling tone falls through the base pitch"
+            let stressed = contourOf toneStep 1.0 2 (Some [ 5; 1 ])
+            Expect.isTrue (abs (List.head stressed - (List.head fall + List.item 2 stressBump)) < 1e-9) "stress adds to the tone"
+            Expect.isTrue (contourOf toneStep 0.0 2 (Some [ 5; 1 ]) |> List.forall (fun st -> abs st = 0.0)) "a flat voice has no movement"
         }
 
         test "a tone level is a fixed step of octaves around the speaker's pitch" {

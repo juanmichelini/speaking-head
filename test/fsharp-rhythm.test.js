@@ -13,7 +13,7 @@ import { syllabify, describe, rhythmPlan, nPVI, vowelDurations, syllableDuration
 // The compiled files exist only after the F# build (see `fsharp/README.md`). Without it the tests
 // skip; the `fsharp` workflow sets REQUIRE_CORE so a missing build is a failure there.
 const dir = new URL('../core/src/', import.meta.url);
-const files = ['03c-Planner.js', '04b-Languages.js', '07-Rhythm.js'];
+const files = ['03d-Planner.js', '04b-Languages.js', '07-Rhythm.js'];
 const built = files.every((f) => existsSync(new URL(f, dir)));
 if (!built && process.env.REQUIRE_CORE) throw new Error(`Error: core/src/ is missing one of ${files.join(', ')}`);
 const skip = built ? false : 'core/ is not built: see fsharp/README.md';
