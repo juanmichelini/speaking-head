@@ -15,17 +15,19 @@ import { plan, markAt } from '../../lib/planner.js';
 import { DEFAULT_FRAME } from '../../lib/score.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { drawTract } from '../../lib/ui/tractview.js';
-import { lazySynth, playAnimated, downloadWav, log, unlog, round } from '../../lib/ui/demo.js';
+import { createShell, round } from '../../lib/ui/lesson-shell.js';
 import { t, tp } from '../../lib/i18n.js';
 
 const $ = (id) => document.getElementById(id);
-const synthHolder = lazySynth();
 const dictionaries = new Map();
-let synth = null;
-let playing = null;
 let current = null;
-const state = { code: 'en', f0: 130 };
-const PITCH = [70, 400];
+const state = { code: 'en' };
+// The shared shell (`lib/ui/lesson-shell.js`) keeps the pitch and does the sound.
+const shell = createShell({
+  onControl: () => convert(),
+  downloadScore: () => current && current.score,
+  downloadName: (s) => `${state.code}-${round(s.f0)}hz.wav`,
+});
 
 // ## Dictionaries
 async function dictionary(code) {
@@ -54,7 +56,7 @@ async function convert() {
   }
   const missing = result.words.filter((w) => !w.ipa).map((w) => w.word);
   $('missing').textContent = missing.length ? t('lang.missing', { language: language.name, words: missing.join(', ') }) : '';
-  current = plan(result.ipa, { f0: state.f0 });
+  current = plan(result.ipa, { f0: shell.state.f0 });
   current.text = result.ipa;
 }
 
@@ -80,15 +82,12 @@ async function useLanguage(code) {
 // ## Saying it
 async function say() {
   if (!current || !current.text) return;
-  if (playing) playing.cancel();
   const p = current;
-  try { synth = await synthHolder.get(); } catch (error) { $('status').textContent = t('common.audioError', { message: error.message }); return; }
-  playing = playAnimated(synth, p.score, (frame, time) => {
+  await shell.play(p.score, (frame, time) => {
     drawTract($('tract'), shapeOf(frame));
     const m = markAt(p.marks, time);
     if (m) $('readout').textContent = t('lang.now', { ipa: p.text, symbol: m.symbol });
   });
-  await playing.done;
 }
 $('readout').style.whiteSpace = 'pre-line';
 
@@ -102,10 +101,5 @@ for (const l of LANGUAGES) {
 $('language').addEventListener('change', (e) => useLanguage(e.target.value));
 $('text').addEventListener('input', convert);
 $('say').addEventListener('click', say);
-$('stop').addEventListener('click', () => { if (playing) playing.cancel(); if (synth) synth.stop(); });
-$('download').addEventListener('click', () => current && downloadWav(current.score, `${state.code}-${round(state.f0)}hz.wav`));
-$('pitch').addEventListener('input', (e) => { state.f0 = log(Number(e.target.value), ...PITCH); $('pitchOut').textContent = `${Math.round(state.f0)} Hz`; convert(); });
-$('pitch').value = unlog(state.f0, ...PITCH);
-$('pitchOut').textContent = `${Math.round(state.f0)} Hz`;
 drawTract($('tract'), shapeOf(DEFAULT_FRAME));
 useLanguage('en');
