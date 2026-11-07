@@ -8,6 +8,7 @@ open IpaTrombone.Planner
 open IpaTrombone.Accents
 open IpaTrombone.Voices
 open IpaTrombone.Pipeline
+open IpaTrombone.Prosody
 
 let private apply (text: string) (rules: string) : string = (applyAccent (parseAccent rules) text).Ipa
 
