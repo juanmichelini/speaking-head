@@ -22,6 +22,7 @@
     <Compile Include="src/06-Tempo.fs" />
     <Compile Include="src/07-Rhythm.fs" />
     <Compile Include="src/08-Accents.fs" />
+    <Compile Include="src/08b-Pipeline.fs" />
     <Compile Include="src/09a-Glottis.fs" />
     <Compile Include="src/09b-Tract.fs" />
     <Compile Include="src/09c-Render.fs" />

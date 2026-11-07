@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>9 · Everything · 🗣️ Speaking Head</title>
+<meta content="Text in, speech out: language, accent, rhythm, speed and voice, all at once." data-i18n-attr="content:demo.9.blurb" name="description"/>
+<link href="/css/site.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="top">
+<a href="/"><strong>🗣️ Speaking Head</strong></a>
+<span>9 · <span data-i18n="demo.9.title">Everything</span></span>
+<a data-i18n="d01.a3" href="/literate/?src=fsharp/src/08b-Pipeline.fs">Read the lesson (F#)</a>
+<a data-i18n="d01.a1" href="/literate/?src=demos/09-everything/main.js">Read this demo's source</a>
+<a data-i18n="everything.a1" href="/literate/?src=lib/pipeline.js">Read the pipeline</a>
+</nav>
+<h1 data-i18n="demo.9.title">Everything</h1>
+<p data-i18n="lesson.9.intro">Every lesson so far changed one stage of the same chain. Here they all run at once: words become IPA (lesson 4), an accent rewrites it (8), a rhythm times it (7), a speed scales it (6), the planner makes the gestures (3) and a voice speaks them (5).</p>
+<section class="panel">
+<div class="row">
+<label><span data-i18n="d04.t1">Language</span> <select id="language"></select></label>
+<label><span data-i18n="d08.t1">Accent</span> <select id="accent"></select></label>
+<label><span data-i18n="d07.h11">Rhythm</span> <select id="rhythm"></select></label>
+<label><span data-i18n="d06.t1">Speed</span> <input id="rate" max="1" min="0" step="0.001" type="range"/> <output id="rateOut"></output></label>
+<label><span data-i18n="d05.h11">Voices</span> <select id="voice"></select></label>
+</div>
+<label class="note" data-i18n="d04.label1" for="text">Text</label>
+<textarea id="text" rows="2" spellcheck="false" style="width:100%;font-size:1.3rem"></textarea>
+<div class="row" style="margin-top:.6rem">
+<button class="primary" data-i18n="d03.button1" id="say">Say</button>
+<button data-i18n="d01.button3" id="stop">Stop</button>
+<button data-i18n="d01.button4" id="download">Download WAV</button>
+</div>
+<p class="readout" id="stages" role="status"></p>
+<p class="note" id="missing" role="status"></p>
+<p class="note" id="status" role="status"></p>
+</section>
+<section aria-label="Vocal tract" class="panel" data-i18n-attr="aria-label:d01.attr2">
+<canvas aria-label="Side view of the vocal tract" height="620" id="tract" width="560"></canvas>
+<p aria-live="polite" class="readout" id="readout" role="status"></p>
+</section>
+<script src="/demos/09-everything/main.js" type="module"></script>
+<script src="/lib/ui/lessonnav.js" type="module"></script>
+</body>
+</html>
