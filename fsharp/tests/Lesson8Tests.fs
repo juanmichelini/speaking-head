@@ -6,6 +6,8 @@ open IpaTrombone.Languages
 open IpaTrombone.Ipa
 open IpaTrombone.Planner
 open IpaTrombone.Accents
+open IpaTrombone.Voices
+open IpaTrombone.Pipeline
 
 let private apply (text: string) (rules: string) : string = (applyAccent (parseAccent rules) text).Ipa
 
@@ -127,5 +129,28 @@ let accentTests =
         test "accents can carry a rhythm" {
             Expect.equal (load "spanish").Rhythm (Some Rhythm.Syllable) "Spanish is syllable-timed"
             Expect.equal (load "rp").Rhythm None "RP says nothing"
+        }
+    ]
+
+[<Tests>]
+let pipelineTests =
+    testList "Lesson 8b: everything in one function" [
+
+        test "the pipeline is the chain of the lessons, and nothing more" {
+            let spanish = languages |> List.find (fun (l: Language) -> l.Code = "es")
+            let voice = (voiceById "woman").Value
+            let entries = parseDictionary ""
+            let heard = textToIpa (Some spanish) entries "hola mundo"
+            let said = say spanish entries None FromLanguage 1.0 voice "hola mundo"
+            Expect.equal said.Ipa heard.Ipa "with no accent the IPA is the language's"
+            Expect.equal said.Speech.TractCm voice.TractCm "the voice's tract goes with the score"
+            Expect.equal said.Mode (Some Rhythm.Syllable) "Spanish is syllable-timed"
+            let fast = say spanish entries None FromLanguage 2.0 voice "hola mundo"
+            Expect.isTrue (fast.Speech.Plan.Duration < said.Speech.Plan.Duration) "twice the rate is shorter"
+            let accented = say spanish entries (Some(parseAccent "o > u")) FromLanguage 1.0 voice "hola mundo"
+            Expect.notEqual accented.Ipa accented.Before "the accent rewrote the IPA"
+            Expect.equal accented.Before heard.Ipa "and the IPA before it is the language's"
+            let flat = say spanish entries None NoRhythm 1.0 voice "hola mundo"
+            Expect.equal flat.Mode None "no rhythm model"
         }
     ]

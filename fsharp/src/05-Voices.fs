@@ -100,7 +100,9 @@ type Speech =
       TractCm: float
       Voice: Voice }
 
-let speak (voice: Voice) (ipa: string) : Speech =
+// `speakWith` also lets the caller change planner options that are not about the speaker (a rate, timing
+// overrides from the rhythm model), so the lessons that change how something is said can use any voice.
+let speakWith (adjust: PlanOptions -> PlanOptions) (voice: Voice) (ipa: string) : Speech =
     let options =
         { defaultPlanOptions with
             F0 = voice.F0
@@ -110,11 +112,14 @@ let speak (voice: Voice) (ipa: string) : Speech =
             Jitter = voice.Jitter
             Range = voice.Range
             Declination = voice.Declination }
+        |> adjust
     let planned = plan options ipa
     let score = if voice.Whisper then whisperScore planned.Score else planned.Score
     { Plan = { planned with Score = score }
       TractCm = voice.TractCm
       Voice = voice }
+
+let speak (voice: Voice) (ipa: string) : Speech = speakWith id voice ipa
 
 // ## How much the formants move
 //

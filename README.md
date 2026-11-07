@@ -23,6 +23,7 @@ share one library in [`lib/`](lib/).
 | 6 | Tempo | Faster and slower speech without turning to mush |
 | 7 | Rhythm | Stress-timed vs syllable-timed |
 | 8 | Accents | Rewrite rules applied to the IPA before it is sounded |
+| 9 | Everything | Text, language, accent, rhythm, speed and voice, all at once |
 
 Lessons 1 and 2 are the two with the most to take in, so each is first taken **one dimension at a time**, in steps
 that lead up to it:
