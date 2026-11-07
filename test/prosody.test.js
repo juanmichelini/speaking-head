@@ -46,3 +46,22 @@ test('the planner gives the same scores as before it was rebuilt on prosody', ()
     });
   }
 });
+
+test('a question ends higher than a statement, and a flat line does not move', async () => {
+  const { planWithLine, plan } = await import('../lib/planner.js');
+  const { LINES, rise, plus } = await import('../lib/prosody.js');
+  const last = (p) => p.score.keyframes[p.score.keyframes.length - 1].f0;
+  const statement = planWithLine('ˈola ˈmundo', LINES.statement);
+  const question = planWithLine('ˈola ˈmundo', LINES.question);
+  assert.ok(last(question) > last(statement));
+  assert.ok(Math.abs(last(planWithLine('ˈola ˈmundo', LINES.flat)) - last(plan('ˈola ˈmundo', { declination: 0 }))) < 1e-9);
+  assert.equal(rise(5, 0.75)(0.5), 0);
+  assert.ok(Math.abs(rise(5, 0.75)(1) - 5) < 1e-9, 'a rise reaches its size at the end');
+  assert.ok(Math.abs(plus(() => 1, () => 2)(0.3) - 3) < 1e-12);
+});
+
+test('plan is planWithLine with the statement drift', async () => {
+  const { planWithLine, plan } = await import('../lib/planner.js');
+  const { declination } = await import('../lib/prosody.js');
+  assert.deepEqual(plan('ˈola', { declination: 0.2 }).score, planWithLine('ˈola', declination(0.2)).score);
+});

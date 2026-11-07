@@ -65,3 +65,27 @@ let applyLine (line: float -> float) (score: Score) : Score =
         Keyframes =
             score.Keyframes
             |> List.map (fun k -> { k with Frame = { k.Frame with F0 = hzAt k.Frame.F0 (line (k.T / total)) } }) }
+
+/// A phrase line is built from simple ones. `rise semitones from` is nothing until `from` of the way through the
+/// phrase and then lifts smoothly by `semitones` by the end; `plus` adds lines together.
+let rise (semitones: float) (from: float) (u: float) : float =
+    if u <= from then
+        0.0
+    else
+        let x = (u - from) / (1.0 - from)
+        semitones * x * x * (3.0 - 2.0 * x)
+
+let plus (lines: (float -> float) list) (u: float) : float = lines |> List.sumBy (fun line -> line u)
+
+/// The named lines. A statement drifts down; a question drifts down a little less and lifts at the end; a flat
+/// line does not move at all.
+type Intonation =
+    | Statement
+    | Question
+    | Flat
+
+let lineOf (kind: Intonation) : float -> float =
+    match kind with
+    | Statement -> declination 0.08
+    | Question -> plus [ declination 0.03; rise 5.0 0.75 ]
+    | Flat -> (fun _ -> 0.0)

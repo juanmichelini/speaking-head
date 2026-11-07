@@ -199,7 +199,10 @@ let private shapeOrFail (symbol: string) : Shape =
     | None -> failwithf "no vowel /%s/" symbol
 
 // ## The planner
-let planTokens (o: PlanOptions) (input: Token list) : Plan =
+//
+// `planTokensWith` takes the phrase line as an argument (see `Prosody`): a function from how far through the phrase
+// it is to semitones. `planTokens` uses the statement drift from `o.Declination`.
+let planTokensWith (line: float -> float) (o: PlanOptions) (input: Token list) : Plan =
     let tm = scaleForRate o.Timing o.Rate
     let segs : Token array = input |> List.filter (fun t -> match t with Unknown _ -> false | _ -> true) |> Array.ofList
     let overrideOf (k: int) : Override option =
@@ -360,10 +363,15 @@ let planTokens (o: PlanOptions) (input: Token list) : Plan =
             (final.Time + tm.EndFade)
             (fun f -> { f with Intensity = 0.0; Aspiration = 0.0; C0n = 0.0; C1n = 0.0 })
             final.Line
-    let score = faded |> Timeline.toScore |> applyLine (declination o.Declination)
+    let score = faded |> Timeline.toScore |> applyLine line
     { Score = score
       Marks = List.rev final.Marks
       Duration = score.Duration }
 
+let planTokens (o: PlanOptions) (input: Token list) : Plan = planTokensWith (declination o.Declination) o input
+
 // Plan from text: tokenize, then plan.
 let plan (o: PlanOptions) (text: string) : Plan = planTokens o (tokenize text)
+
+// The same, with the phrase line given: a question is `planWith (lineOf Question)`.
+let planWith (line: float -> float) (o: PlanOptions) (text: string) : Plan = planTokensWith line o (tokenize text)

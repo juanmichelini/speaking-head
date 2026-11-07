@@ -141,16 +141,19 @@ let pipelineTests =
             let voice = (voiceById "woman").Value
             let entries = parseDictionary ""
             let heard = textToIpa (Some spanish) entries "hola mundo"
-            let said = say spanish entries None FromLanguage 1.0 voice "hola mundo"
+            let said = say spanish entries None FromLanguage 1.0 Statement voice "hola mundo"
             Expect.equal said.Ipa heard.Ipa "with no accent the IPA is the language's"
             Expect.equal said.Speech.TractCm voice.TractCm "the voice's tract goes with the score"
             Expect.equal said.Mode (Some Rhythm.Syllable) "Spanish is syllable-timed"
-            let fast = say spanish entries None FromLanguage 2.0 voice "hola mundo"
+            let fast = say spanish entries None FromLanguage 2.0 Statement voice "hola mundo"
             Expect.isTrue (fast.Speech.Plan.Duration < said.Speech.Plan.Duration) "twice the rate is shorter"
-            let accented = say spanish entries (Some(parseAccent "o > u")) FromLanguage 1.0 voice "hola mundo"
+            let accented = say spanish entries (Some(parseAccent "o > u")) FromLanguage 1.0 Statement voice "hola mundo"
             Expect.notEqual accented.Ipa accented.Before "the accent rewrote the IPA"
             Expect.equal accented.Before heard.Ipa "and the IPA before it is the language's"
-            let flat = say spanish entries None NoRhythm 1.0 voice "hola mundo"
+            let flat = say spanish entries None NoRhythm 1.0 Statement voice "hola mundo"
+            let asked = say spanish entries None FromLanguage 1.0 Question voice "hola mundo"
+            let lastPitch (s: Said) = (List.last s.Speech.Plan.Score.Keyframes).Frame.F0
+            Expect.isTrue (lastPitch asked > lastPitch said) "a question ends higher than a statement"
             Expect.equal flat.Mode None "no rhythm model"
         }
     ]
