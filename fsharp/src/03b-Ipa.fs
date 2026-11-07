@@ -80,7 +80,7 @@ let private toneLevel (c: char) : int option =
     | '˩' -> Some 1
     | _ -> None
 
-let private toneLetter (level: int) : string =
+let toneLetter (level: int) : string =
     match level with
     | 5 -> "˥"
     | 4 -> "˦"

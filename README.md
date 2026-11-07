@@ -34,6 +34,8 @@ that lead up to it:
   voiceless stops, voiced stops, nasals, approximants, laterals, trills and taps, affricates), with only the **place**
   free: a line from the lips to the throat that you press and slide along, hearing every place between the named ones;
   then lesson 2 is the full table.
+- **3.1, tones:** one vowel with its pitch contour as the only free thing: five levels (Chao's tone letters), drawn on a pad
+  or chosen from the four Mandarin tones; then lesson 3 joins vowels and consonants.
 
 **All eight experiments are live.** They have been checked numerically and by smoke tests, but a human ear and a
 real-browser pass are still the best next contribution; see "Status" in the plan.

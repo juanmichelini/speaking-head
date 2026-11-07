@@ -95,6 +95,15 @@ let scaleForRate (t: Timings) (rate: float) : Timings =
         Glide = t.Glide / sqrt r
         PauseScale = 1.0 / r }
 
+// ## Tone: a level becomes a pitch
+//
+// A tone is written as Chao levels, 1 (low) to 5 (high), and 3 is the speaker's own pitch. Each level is a fixed
+// step of `step` octaves, so level 5 is two steps (0.24 octave, about 18 %) above `peak` and level 1 the same
+// distance below. `peak` is the pitch without a tone (the stress accent included); `range` is the voice's
+// liveliness (0 is flat, 1 is normal).
+let toneHz (step: float) (range: float) (peak: float) (level: int) : float =
+    peak * (2.0 ** (float (level - 3) * step * range))
+
 // How far a vowel of duration `d` gets toward its target. Full at `below` seconds or longer,
 // falling to 55 % at 0.04 s. Below that the tongue barely moves.
 let undershoot (below: float) (d: float) (shape: Shape) : Shape =
@@ -247,7 +256,7 @@ let planTokens (o: PlanOptions) (input: Token list) : Plan =
         // A tone is a list of pitch levels (5 high, 1 low) spread evenly across the vowel.
         let levels = Option.defaultValue [ 3 ] s.Tone
         let hz (level: int) : float =
-            if s.Tone.IsSome then peak * (2.0 ** (float (level - 3) * tm.ToneStep * o.Range)) else peak
+            if s.Tone.IsSome then toneHz tm.ToneStep o.Range peak level else peak
         let glide = min tm.Glide (d * 0.4)
         let source (f: Frame) : Frame =
             { f with
