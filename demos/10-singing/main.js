@@ -30,6 +30,12 @@ const shell = createShell({
 const EXAMPLES = {
   scale: { text: 'ˈdoʊ ˈreɪ ˈmiː ˈfɑː ˈsoʊ ˈlɑː ˈtiː ˈdoʊ', notes: 'C4 D4 E4 F4 G4 A4 B4 C5:2', bpm: 120 },
   birthday: { text: 'ˈhæpi ˈbɜːθdeɪ tə ˈjuː', notes: 'G4:0.75 G4:0.25 A4 G4 C5 B4:2', bpm: 100 },
+  // All four lines: a note for each of the 25 syllables.
+  birthdayFull: {
+    text: 'ˈhæpi ˈbɜːθdeɪ tə ˈjuː ˈhæpi ˈbɜːθdeɪ tə ˈjuː ˈhæpi ˈbɜːθdeɪ dɪɹ ˈmɛɹi ˈhæpi ˈbɜːθdeɪ tə ˈjuː',
+    notes: 'G4:0.75 G4:0.25 A4 G4 C5 B4:2 G4:0.75 G4:0.25 A4 G4 D5 C5:2 G4:0.75 G4:0.25 G5 E5 C5 B4 A4:2 F5:0.75 F5:0.25 E5 C5 D5 C5:2',
+    bpm: 100,
+  },
 };
 
 // ## Building the song

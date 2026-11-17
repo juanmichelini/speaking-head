@@ -332,5 +332,6 @@
  "sing.example.birthday": "জন্মদিনের সুর",
  "sing.tempo": "গতি",
  "sing.sing": "গাও",
- "sing.empty": "অন্তত একটি সুর লিখুন, যেমন C4।"
+ "sing.empty": "অন্তত একটি সুর লিখুন, যেমন C4।",
+ "sing.example.birthdayFull": "শুভ জন্মদিন (পুরো গান)"
 }

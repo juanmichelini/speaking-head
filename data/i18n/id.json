@@ -332,5 +332,6 @@
  "sing.example.birthday": "Lagu ulang tahun",
  "sing.tempo": "Tempo",
  "sing.sing": "Nyanyikan",
- "sing.empty": "Tulis setidaknya satu nada, seperti C4."
+ "sing.empty": "Tulis setidaknya satu nada, seperti C4.",
+ "sing.example.birthdayFull": "Selamat ulang tahun (lagu penuh)"
 }
