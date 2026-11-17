@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { yin, pitchTrack, pitchBetween, centsOff, largestJump, decimate } from '../lib/pitchtrack.js';
 import { sing, parseNotes } from '../lib/melody.js';
 import { renderScore } from '../lib/render.js';
+import { plan } from '../lib/planner.js';
 import { HAPPY_BIRTHDAY, songFor } from '../lib/songs.js';
 
 // Listening with numbers: render, then measure the pitch of what came out (`pitchtrack.js`).
@@ -60,5 +61,20 @@ test('Happy Birthday in every language: every sustained note is within 25 cents,
     // The biggest step between neighbouring 10 ms frames (counting only frames the tracker is sure of) is a glide, not a glitch.
     const jump = largestJump(track);
     assert.ok(jump < 4, `${code}: pitch jumped ${jump.toFixed(1)} semitones in 10 ms`);
+  }
+});
+
+// Consonants: a trill is the tongue tapping the ridge, so the sound must actually be interrupted (`consonants.js`).
+// It once never closed: the gap flickered between wide and wider and the trill stayed at 80 % loudness.
+test('a trill is interrupted: the loudness dips to under a third of the vowel\'s', () => {
+  for (const symbol of ['r', 'ʀ', 'ʙ']) {
+    const p = plan(`a${symbol}a`, { f0: 130, declination: 0 });
+    const samples = renderScore(p.score, { sampleRate: 44100 });
+    const c = p.marks.find((m) => m.type === 'consonant');
+    const rms = (from, n) => Math.sqrt(samples.subarray(from, from + n).reduce((a, b) => a + b * b, 0) / n);
+    const vowel = rms(Math.floor(((p.marks[0].start + p.marks[0].end) / 2) * 44100) - 220, 440);
+    let quietest = Infinity;
+    for (let t = c.start; t < c.end; t += 0.0025) quietest = Math.min(quietest, rms(Math.floor(t * 44100), 110));
+    assert.ok(quietest < vowel / 3, `${symbol}: quietest ${(quietest / vowel).toFixed(2)} of the vowel`);
   }
 });

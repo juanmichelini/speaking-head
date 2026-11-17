@@ -606,8 +606,8 @@ let private trill (c: Consonant) (spec: Spec) (x: Ctx) (tl: Timeline) : Timeline
         fun f ->
             { f with
                 C0i = (c0Of spec).Index
-                C0d = 0.35
-                C0m = 0.3
+                C0d = 0.2
+                C0m = 0.35
                 C0mHz = (if c.Place = Uvular || (match c.Place with At i -> i < 22.0 | _ -> false) then 30.0 else 25.0)
                 C0n = 0.15
                 Intensity = 1.0 }
