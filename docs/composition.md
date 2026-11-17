@@ -46,7 +46,7 @@ adds a stage.
 A module may import only from a lower level.
 
 - **0:** `pinktrombone`, `score`, `vowels`, `vowel-fit`, `syllables`, `prosody`, `i18n`, `literate`, `demos`, `composition`, `worklet`, `songs`
-- **1:** `render`, `analysis`, `tractshape`, `vowel-map`, `consonants`, `g2p`
+- **1:** `render`, `analysis`, `pitchtrack`, `tractshape`, `vowel-map`, `consonants`, `g2p`
 - **2:** `audio`, `between`, `ipa`
 - **3:** `planner`, `accents`
 - **4:** `voices`, `rhythm`, `languages`

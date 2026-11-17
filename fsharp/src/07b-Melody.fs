@@ -7,6 +7,7 @@
 // as a line in semitones with a short glide between notes.
 module IpaTrombone.Melody
 
+open IpaTrombone.Score
 open IpaTrombone.Planner
 open IpaTrombone.Prosody
 open IpaTrombone.Rhythms
@@ -90,6 +91,24 @@ let noteLine (glide: float) (spans: (float * float) list) (semitones: float list
                 else go (n + 1)
         go 0
 
+/// `applyLine` moves each keyframe by the line's value at that keyframe's time, and the engine blends straight between
+/// keyframes, so a step in the line between two notes would be smeared across a whole long vowel. Add keyframes through
+/// each glide first, with the frame the score already had there. (A pitch tracker found this in the Spanish song.)
+let glideTimes (glide: float) (spans: (float * float) list) : float list =
+    spans
+    |> List.pairwise
+    |> List.collect (fun ((_, e), (s, _)) ->
+        let edge = (e + s) / 2.0
+        [ -0.5; -0.25; 0.0; 0.25; 0.5 ] |> List.map (fun k -> edge + k * glide))
+
+let withKeyframesAt (score: Score) (times: float list) : Score =
+    let have = score.Keyframes |> List.map (fun k -> k.T)
+    let extra =
+        times
+        |> List.filter (fun t -> t > 0.0 && t < score.Duration && not (List.exists (fun h -> abs (h - t) < 1e-6) have))
+        |> List.map (fun t -> ({ T = t; Frame = frameAt score.Keyframes t }: Keyframe))
+    { score with Keyframes = List.sortBy (fun (k: Keyframe) -> k.T) (score.Keyframes @ extra) }
+
 /// Sing `ipa` on `notes` at `bpm` beats a minute. Syllable n is sung on note n; the last note carries on if there
 /// are fewer notes than syllables. `adjust` sets the speaker (pitch, tenseness) as for the planner.
 let sing (bpm: float) (adjust: PlanOptions -> PlanOptions) (ipa: string) (notes: Note list) : Song =
@@ -117,6 +136,7 @@ let sing (bpm: float) (adjust: PlanOptions -> PlanOptions) (ipa: string) (notes:
     let b = midiOfHz options.F0
     let semitones = syllables |> List.mapi (fun n _ -> float (noteFor n).Midi - b)
     let track = noteLine 0.06 spans semitones
-    let score = applyLine (fun u -> track (u * planned.Score.Duration)) planned.Score
+    let refined = withKeyframesAt planned.Score (glideTimes 0.06 spans)
+    let score = applyLine (fun u -> track (u * refined.Duration)) refined
     { Plan = { planned with Score = score; Duration = score.Duration }
       Notes = spans |> List.mapi (fun n (s, e) -> ({ Midi = (noteFor n).Midi; Start = s; End = e }: SungNote)) }
