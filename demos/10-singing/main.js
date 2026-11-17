@@ -6,6 +6,8 @@
 // voice from lesson 5 decides the base pitch and quality, so a bass and a soprano sing the same notes in their own
 // ranges of colour.
 import { sing, parseNotes } from '../../lib/melody.js';
+import { songFor } from '../../lib/songs.js';
+import { LANGUAGES } from '../../lib/languages.js';
 import { voiceById, VOICES } from '../../lib/voices.js';
 import { shapeOf } from '../../lib/tractshape.js';
 import { DEFAULT_FRAME } from '../../lib/score.js';
@@ -26,16 +28,11 @@ const shell = createShell({
   downloadOptions: () => ({ tractLength: last ? last.tractLength : undefined }),
 });
 
-// Two examples to start from: a scale, and a tune everyone knows.
+// Examples to start from: a scale, the first line of a tune everyone knows, and the whole of it in the chosen language
+// (`lib/songs.js`).
 const EXAMPLES = {
   scale: { text: 'ˈdoʊ ˈreɪ ˈmiː ˈfɑː ˈsoʊ ˈlɑː ˈtiː ˈdoʊ', notes: 'C4 D4 E4 F4 G4 A4 B4 C5:2', bpm: 120 },
   birthday: { text: 'ˈhæpi ˈbɜːθdeɪ tə ˈjuː', notes: 'G4:0.75 G4:0.25 A4 G4 C5 B4:2', bpm: 100 },
-  // All four lines: a note for each of the 25 syllables.
-  birthdayFull: {
-    text: 'ˈhæpi ˈbɜːθdeɪ tə ˈjuː ˈhæpi ˈbɜːθdeɪ tə ˈjuː ˈhæpi ˈbɜːθdeɪ dɪɹ ˈmɛɹi ˈhæpi ˈbɜːθdeɪ tə ˈjuː',
-    notes: 'G4:0.75 G4:0.25 A4 G4 C5 B4:2 G4:0.75 G4:0.25 A4 G4 D5 C5:2 G4:0.75 G4:0.25 G5 E5 C5 B4 A4:2 F5:0.75 F5:0.25 E5 C5 D5 C5:2',
-    bpm: 100,
-  },
 };
 
 // ## Building the song
@@ -95,16 +92,21 @@ async function say() {
 
 // ## Controls
 const option = (select, value, text) => select.append(Object.assign(document.createElement('option'), { value, textContent: text }));
-for (const key of Object.keys(EXAMPLES)) option($('example'), key, t(`sing.example.${key}`));
+for (const key of [...Object.keys(EXAMPLES), 'birthdayFull']) option($('example'), key, t(`sing.example.${key}`));
+for (const l of LANGUAGES) option($('songLanguage'), l.code, `${l.name} · ${l.native}`);
 for (const v of VOICES) option($('voice'), v.id, t(`voice.label.${v.id}`));
 $('voice').value = 'woman';
 const showBpm = () => { $('bpmOut').textContent = `${$('bpm').value} ♩`; };
 const useExample = () => {
-  const e = EXAMPLES[$('example').value];
+  const key = $('example').value;
+  const e = key === 'birthdayFull' ? { ...songFor($('songLanguage').value), bpm: 100 } : EXAMPLES[key];
+  // A language whose IPA nobody who speaks it has checked yet says so.
+  shell.setStatus(key === 'birthdayFull' && !e.checked ? t('sing.unchecked', { language: LANGUAGES.find((l) => l.code === $('songLanguage').value).name }) : '');
   $('text').value = e.text; $('notes').value = e.notes; $('bpm').value = e.bpm;
   showBpm();
 };
 $('example').addEventListener('change', useExample);
+$('songLanguage').addEventListener('change', () => { $('example').value = 'birthdayFull'; useExample(); });
 $('bpm').addEventListener('input', showBpm);
 $('say').addEventListener('click', say);
 useExample();

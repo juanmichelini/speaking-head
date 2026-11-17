@@ -333,5 +333,7 @@
  "sing.tempo": "السرعة",
  "sing.sing": "غنِّ",
  "sing.empty": "اكتب نغمة واحدة على الأقل، مثل C4.",
- "sing.example.birthdayFull": "عيد ميلاد سعيد (الأغنية كاملة)"
+ "sing.example.birthdayFull": "عيد ميلاد سعيد (الأغنية كاملة)",
+ "sing.language": "لغة الأغنية",
+ "sing.unchecked": "لم يراجع متحدث اللغة بعدُ الأبجدية الصوتية في هذه النسخة ({language})."
 }

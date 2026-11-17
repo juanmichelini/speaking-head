@@ -333,5 +333,7 @@
  "sing.tempo": "速度",
  "sing.sing": "唱",
  "sing.empty": "请至少写一个音符，例如 C4。",
- "sing.example.birthdayFull": "生日快乐歌（完整）"
+ "sing.example.birthdayFull": "生日快乐歌（完整）",
+ "sing.language": "歌曲语言",
+ "sing.unchecked": "这个{language}版本的国际音标还没有请母语者检查过。"
 }
