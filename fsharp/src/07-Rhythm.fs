@@ -240,9 +240,12 @@ type RhythmPlan =
 
 let private minimumVowel = 0.045
 
+// In a syllable-timed language the vowel is not squeezed away to make a heavy syllable fit its beat (see `lib/rhythm.js`).
+let minimumVowelSyllable = 0.08
+
 // Given how long each syllable should last (from a rhythm, or from the notes of a melody), the overrides that
 // get there: squeeze consonants where the syllable is tight, then give the vowel the rest.
-let fitDurations (text: string) (syllables: SyllableInfo list) (durations: float list) (reduceBelow: float) : (int * Override) list =
+let fitDurations (text: string) (syllables: SyllableInfo list) (durations: float list) (reduceBelow: float) (minVowel: float) : (int * Override) list =
     let segs = segmentsOf text
     let consonantsOf (s: SyllableInfo) : int list = s.Segments |> List.filter (fun k -> not (List.contains k s.Nucleus))
     // How long the consonants of a syllable come out in a given plan.
@@ -276,7 +279,7 @@ let fitDurations (text: string) (syllables: SyllableInfo list) (durations: float
         indexed
         |> List.fold
             (fun (acc: Map<int, Override>) (s, duration) ->
-                let vowelTime = max minimumVowel (duration - spent squeezed s)
+                let vowelTime = max minVowel (duration - spent squeezed s)
                 s.Nucleus
                 |> List.fold
                     (fun m k ->
@@ -307,7 +310,7 @@ let rhythmPlan (mode: Rhythm) (options: RhythmOptions) (text: string) : RhythmPl
     let reduceBelow = Option.defaultValue (if mode = Rhythm.Stress then 0.07 else 0.0) options.ReduceBelow
     { Syllables = syllables
       Durations = durations
-      Overrides = fitDurations text syllables durations reduceBelow }
+      Overrides = fitDurations text syllables durations reduceBelow (if mode = Rhythm.Syllable then minimumVowelSyllable else minimumVowel) }
 
 // ## Measuring rhythm
 //
