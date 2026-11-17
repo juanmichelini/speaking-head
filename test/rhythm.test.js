@@ -90,3 +90,12 @@ test('the classic demonstration: extra syllables barely lengthen a stress-timed 
   assert.ok(stress < 1.3, `stress-timed grew by ${stress.toFixed(2)}`);
   assert.ok(syllable > 1.5, `syllable-timed grew by ${syllable.toFixed(2)}`);
 });
+
+// Found by measuring rendered French: a heavy syllable (sɥi, vɛk) squeezed its vowel to 40-50 ms, which is too short to
+// reach the vowel's target. In syllable-timed speech the vowel keeps at least 80 ms and the syllable runs a little long.
+test('syllable-timed speech does not squeeze a vowel below 80 ms', () => {
+  const S = 'ʒə sɥi dɑ̃ la mɛˈzɔ̃ avɛk mɔ̃ ʃɛ̃';
+  const { overrides } = rhythmPlan(S, 'syllable');
+  const seconds = Object.values(overrides).filter((o) => o.seconds !== undefined).map((o) => o.seconds);
+  assert.ok(seconds.length > 5 && Math.min(...seconds) >= 0.08 - 1e-9, `shortest ${Math.min(...seconds)}`);
+});

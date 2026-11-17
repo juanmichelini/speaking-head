@@ -116,7 +116,7 @@ let sing (bpm: float) (adjust: PlanOptions -> PlanOptions) (ipa: string) (notes:
     let syllables = syllabify ipa
     let noteFor (n: int) = List.item (min n (List.length notes - 1)) notes
     let durations = syllables |> List.mapi (fun n _ -> (noteFor n).Beats * 60.0 / bpm)
-    let overrides = fitDurations ipa syllables durations 0.0
+    let overrides = fitDurations ipa syllables durations 0.0 0.045
     let chosen = adjust defaultPlanOptions
     let options = { chosen with Overrides = overrides; Range = 0.0 }
     let planned = planWith (fun _ -> 0.0) options ipa
