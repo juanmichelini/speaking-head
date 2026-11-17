@@ -333,5 +333,7 @@
  "sing.tempo": "গতি",
  "sing.sing": "গাও",
  "sing.empty": "অন্তত একটি সুর লিখুন, যেমন C4।",
- "sing.example.birthdayFull": "শুভ জন্মদিন (পুরো গান)"
+ "sing.example.birthdayFull": "শুভ জন্মদিন (পুরো গান)",
+ "sing.language": "গানের ভাষা",
+ "sing.unchecked": "এই {language} সংস্করণের IPA এখনো ভাষাভাষী কেউ যাচাই করেননি।"
 }

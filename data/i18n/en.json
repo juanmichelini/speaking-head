@@ -333,5 +333,7 @@
  "sing.tempo": "Tempo",
  "sing.sing": "Sing",
  "sing.empty": "Write at least one note, like C4.",
- "sing.example.birthdayFull": "Happy Birthday (whole song)"
+ "sing.example.birthdayFull": "Happy Birthday (whole song)",
+ "sing.language": "Song language",
+ "sing.unchecked": "The IPA of this {language} version has not been checked by a speaker of the language yet."
 }

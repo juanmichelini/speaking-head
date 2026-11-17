@@ -333,5 +333,7 @@
  "sing.tempo": "Tempo",
  "sing.sing": "Cantar",
  "sing.empty": "Escribe al menos una nota, como C4.",
- "sing.example.birthdayFull": "Cumpleaños feliz (canción completa)"
+ "sing.example.birthdayFull": "Cumpleaños feliz (canción completa)",
+ "sing.language": "Idioma de la canción",
+ "sing.unchecked": "El AFI de esta versión en {language} aún no lo ha revisado una persona que hable el idioma."
 }

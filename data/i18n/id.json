@@ -333,5 +333,7 @@
  "sing.tempo": "Tempo",
  "sing.sing": "Nyanyikan",
  "sing.empty": "Tulis setidaknya satu nada, seperti C4.",
- "sing.example.birthdayFull": "Selamat ulang tahun (lagu penuh)"
+ "sing.example.birthdayFull": "Selamat ulang tahun (lagu penuh)",
+ "sing.language": "Bahasa lagu",
+ "sing.unchecked": "IPA versi {language} ini belum diperiksa oleh penutur bahasanya."
 }

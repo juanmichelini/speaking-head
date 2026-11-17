@@ -333,5 +333,7 @@
  "sing.tempo": "Темп",
  "sing.sing": "Петь",
  "sing.empty": "Напишите хотя бы одну ноту, например C4.",
- "sing.example.birthdayFull": "С днём рождения (вся песня)"
+ "sing.example.birthdayFull": "С днём рождения (вся песня)",
+ "sing.language": "Язык песни",
+ "sing.unchecked": "МФА этой версии ({language}) ещё не проверял носитель языка."
 }

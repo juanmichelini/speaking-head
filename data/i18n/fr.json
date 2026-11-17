@@ -333,5 +333,7 @@
  "sing.tempo": "Tempo",
  "sing.sing": "Chanter",
  "sing.empty": "Écrivez au moins une note, comme C4.",
- "sing.example.birthdayFull": "Joyeux anniversaire (chanson entière)"
+ "sing.example.birthdayFull": "Joyeux anniversaire (chanson entière)",
+ "sing.language": "Langue de la chanson",
+ "sing.unchecked": "L'API de cette version en {language} n'a pas encore été relue par un locuteur."
 }

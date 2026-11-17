@@ -333,5 +333,7 @@
  "sing.tempo": "गति",
  "sing.sing": "गाएँ",
  "sing.empty": "कम से कम एक स्वर लिखें, जैसे C4।",
- "sing.example.birthdayFull": "जन्मदिन मुबारक (पूरा गीत)"
+ "sing.example.birthdayFull": "जन्मदिन मुबारक (पूरा गीत)",
+ "sing.language": "गीत की भाषा",
+ "sing.unchecked": "इस {language} संस्करण के IPA को अभी किसी भाषी ने जाँचा नहीं है।"
 }
