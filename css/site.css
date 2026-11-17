@@ -75,6 +75,9 @@ button, select, input[type="text"], textarea {
   font: 1rem var(--ipa); color: var(--ink); background: var(--bg); border: 1px solid var(--line);
   border-radius: 8px; padding: .4rem .7rem;
 }
+/* A select is as wide as its longest option, which in some languages is wider than a phone. */
+select { max-width: 100%; }
+label:has(> select) { max-width: 100%; }
 /* Buttons are controls, not text: a press-and-hold should never start a text selection or a long-press menu. */
 /* Double-tap should not zoom the page (it fires when you press the same vowel twice). Pinch-zoom still works. */
 html { touch-action: manipulation; }
