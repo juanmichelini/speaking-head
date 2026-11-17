@@ -332,5 +332,6 @@
  "sing.example.birthday": "जन्मदिन की धुन",
  "sing.tempo": "गति",
  "sing.sing": "गाएँ",
- "sing.empty": "कम से कम एक स्वर लिखें, जैसे C4।"
+ "sing.empty": "कम से कम एक स्वर लिखें, जैसे C4।",
+ "sing.example.birthdayFull": "जन्मदिन मुबारक (पूरा गीत)"
 }

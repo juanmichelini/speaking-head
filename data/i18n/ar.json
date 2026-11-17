@@ -332,5 +332,6 @@
  "sing.example.birthday": "لحن عيد ميلاد",
  "sing.tempo": "السرعة",
  "sing.sing": "غنِّ",
- "sing.empty": "اكتب نغمة واحدة على الأقل، مثل C4."
+ "sing.empty": "اكتب نغمة واحدة على الأقل، مثل C4.",
+ "sing.example.birthdayFull": "عيد ميلاد سعيد (الأغنية كاملة)"
 }

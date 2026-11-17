@@ -332,5 +332,6 @@
  "sing.example.birthday": "生日歌",
  "sing.tempo": "速度",
  "sing.sing": "唱",
- "sing.empty": "请至少写一个音符，例如 C4。"
+ "sing.empty": "请至少写一个音符，例如 C4。",
+ "sing.example.birthdayFull": "生日快乐歌（完整）"
 }

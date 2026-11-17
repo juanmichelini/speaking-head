@@ -332,5 +332,6 @@
  "sing.example.birthday": "Un air d'anniversaire",
  "sing.tempo": "Tempo",
  "sing.sing": "Chanter",
- "sing.empty": "Écrivez au moins une note, comme C4."
+ "sing.empty": "Écrivez au moins une note, comme C4.",
+ "sing.example.birthdayFull": "Joyeux anniversaire (chanson entière)"
 }
