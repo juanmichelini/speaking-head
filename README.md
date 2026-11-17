@@ -81,6 +81,15 @@ python3 -m http.server 8000   # then open http://localhost:8000
 Deploying: import the repo in [Vercel](https://vercel.com/new), framework preset **Other**, no build command, output
 directory `.` (already set in [`vercel.json`](vercel.json)).
 
+## Listening with numbers
+
+The tests also *listen*: they render a score to samples and measure it, so a change that breaks how it sounds fails
+even though nobody heard it. [`lib/pitchtrack.js`](lib/pitchtrack.js) measures pitch (every sung note of Happy Birthday,
+in all ten languages, must land within 25 cents of its note), and [`lib/formanttrack.js`](lib/formanttrack.js) measures
+vowel formants (every vowel must have the formants the chart says). This is what found the sung notes drifting, the
+trills that never closed and the squeezed vowels in French. `node scripts/listen.mjs es 120` writes a song as a WAV and
+prints a per-note report. It cannot say whether something sounds *good*: that still takes ears.
+
 ## Literate programming
 
 The source is written to be read. Top-level `//` comment lines are prose (lightweight Markdown), and the code follows
