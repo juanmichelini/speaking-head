@@ -10,3 +10,7 @@ core/
 
 # reference recordings (CC-licensed, local analysis only; see scripts/fetch-reference.mjs)
 ref/
+
+# the on-demand listening tools (tools/listening/): their Python environment
+.venv/
+__pycache__/

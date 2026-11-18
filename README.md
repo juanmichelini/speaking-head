@@ -90,6 +90,8 @@ vowel formants (every vowel must have the formants the chart says). This is what
 trills that never closed and the squeezed vowels in French. `node scripts/listen.mjs es 120` writes a song as a WAV and
 prints a per-note report. It cannot say whether something sounds *good*: that still takes ears.
 
+Two heavier tools run on demand, outside CI and `npm test`, because they need Python and model weights: Whisper transcribes the rendered phrases and reports word error rate (`scripts/listen-whisper.mjs`, then `tools/listening/whisper_wer.py`). See [`tools/listening/README.md`](tools/listening/README.md).
+
 ## Literate programming
 
 The source is written to be read. Top-level `//` comment lines are prose (lightweight Markdown), and the code follows
