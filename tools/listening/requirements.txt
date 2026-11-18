@@ -1,0 +1,4 @@
+# Only for tools/listening/whisper_wer.py. Nothing here is needed by the site or by `npm test`.
+faster-whisper>=1.0,<2
+# faster-whisper 1.2 calls av.open(metadata_errors=...), which av 19 no longer accepts.
+av>=14,<17
